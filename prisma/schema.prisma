@@ -1,0 +1,140 @@
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum FileStatus {
+  NOT_RECEIVED
+  PROCESSING
+  MORE_INFO_REQUIRED
+  APPROVED
+  REJECTED
+}
+
+model File {
+  id         String     @id @default(auto()) @map("_id") @db.ObjectId
+  accessKey  String     @unique
+  barcode    String     @unique
+  type       String?
+  name       String?
+  department String?
+  details    String?
+  status     FileStatus @default(NOT_RECEIVED)
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
+
+  movements Movement[]
+}
+
+model Office {
+  id      String  @id @default(auto()) @map("_id") @db.ObjectId
+  name    String
+  details String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  movements Movement[]
+  users     User[]
+}
+
+model Movement {
+  id       String  @id @default(auto()) @map("_id") @db.ObjectId
+  prevId   String? @db.ObjectId
+  nextId   String? @db.ObjectId
+  comment  String?
+  fileId   String  @db.ObjectId
+  officeId String  @db.ObjectId
+
+  createdAt DateTime @default(now())
+
+  file   File   @relation(fields: [fileId], references: [id])
+  office Office @relation(fields: [officeId], references: [id])
+}
+
+enum Role {
+  USER
+  STAFF
+  ADMIN
+}
+
+model User {
+  id            String    @id @default(auto()) @map("_id") @db.ObjectId
+  name          String?
+  email         String?   @unique
+  emailVerified DateTime?
+  image         String?
+  officeId      String?   @db.ObjectId
+  password      String?
+  role          Role      @default(USER)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  accounts      Account[]
+  Authenticator Authenticator[]
+  office        Office?         @relation(fields: [officeId], references: [id])
+  sessions      Session[]
+}
+
+model Account {
+  id                String  @id @default(auto()) @map("_id") @db.ObjectId
+  userId            String  @db.ObjectId
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.String
+  access_token      String? @db.String
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.String
+  session_state     String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  sessionToken String   @unique
+  userId       String   @db.ObjectId
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model VerificationToken {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  identifier String
+  token      String
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+// Optional for WebAuthn support
+model Authenticator {
+  credentialID         String  @id @map("_id")
+  userId               String  @db.ObjectId
+  providerAccountId    String
+  credentialPublicKey  String
+  counter              Int
+  credentialDeviceType String
+  credentialBackedUp   Boolean
+  transports           String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, credentialID])
+}
