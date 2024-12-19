@@ -24,10 +24,13 @@ model File {
   department String?
   details    String?
   status     FileStatus @default(NOT_RECEIVED)
-  createdAt  DateTime   @default(now())
-  updatedAt  DateTime   @updatedAt
+  userId String? @db.ObjectId
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   movements Movement[]
+  user User? @relation(fields: [userId], references: [id])
 }
 
 model Office {
@@ -64,6 +67,7 @@ enum Role {
 
 model User {
   id            String    @id @default(auto()) @map("_id") @db.ObjectId
+  uniqueID String? @unique
   name          String?
   email         String?   @unique
   emailVerified DateTime?
@@ -77,6 +81,7 @@ model User {
 
   accounts      Account[]
   Authenticator Authenticator[]
+  files File[]
   office        Office?         @relation(fields: [officeId], references: [id])
   sessions      Session[]
 }

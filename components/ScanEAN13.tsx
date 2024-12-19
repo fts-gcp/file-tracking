@@ -8,7 +8,11 @@ import {
   NotFoundException,
 } from "@zxing/library";
 
-const ScanEAN13 = () => {
+interface Props {
+  onBarcodeDetection?: (barcode: string) => void;
+}
+
+const ScanEAN13 = ({ onBarcodeDetection }: Props) => {
   const [barcode, setBarcode] = useState("");
   const videoRef = useRef<HTMLVideoElement>(null);
   const [videoInputDevices, setVideoInputDevices] = useState<MediaDeviceInfo[]>(
@@ -65,6 +69,9 @@ const ScanEAN13 = () => {
         (result, err) => {
           if (result) {
             setBarcode(result.getText());
+            if (onBarcodeDetection) {
+              onBarcodeDetection(result.getText());
+            }
           }
           if (err && !(err instanceof NotFoundException)) {
             console.error(err);

@@ -42,7 +42,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         return user;
       },
     }),
-    Google,
+    Google({ allowDangerousEmailAccountLinking: true }),
   ],
   callbacks: {
     async jwt({ token, user }) {
