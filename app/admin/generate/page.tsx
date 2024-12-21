@@ -1,30 +1,19 @@
-"use client";
-import { Button } from "@/components/ui/button";
-import { createNewFile } from "@/app/admin/generate/file.actions";
-import { useState } from "react";
-import { File as FileModel } from "@prisma/client";
-import GenerateBarcode from "@/app/GenerateBarcode";
-import GenerateAztecCode from "@/app/GenerateAztecCode";
+import GenerateCode from "@/app/admin/generate/GenerateCode";
 
 const GenerateBarcodePage = () => {
-  const [file, setFile] = useState<FileModel | null>(null);
   return (
-    <div>
-      <h1>Generate New File</h1>
-      <Button
-        onClick={async () => {
-          const res = await createNewFile();
-          setFile(res);
-        }}
-      >
-        Generate
-      </Button>
-      {file && (
-        <div>
-          <GenerateBarcode value={file.barcode} />
-          <GenerateAztecCode value={file.accessKey} />
+    <div className={"mt-2"}>
+      <p className={"text-3xl text-blue-400 font-bold text-center "}>
+        Begum Rokeya University, Rangpur
+      </p>
+      <p className={"text-3xl text-blue-400 font-bold text-center "}>
+        File Tracking System
+      </p>
+      <div className="flex flex-col items-center justify-center h-[90vh]">
+        <div className={"-mt-[30vh]"}>
+          <GenerateCode />
         </div>
-      )}
+      </div>
     </div>
   );
 };

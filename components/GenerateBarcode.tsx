@@ -11,6 +11,8 @@ const GenerateBarcode: React.FC<{ value: string }> = ({ value }) => {
       JsBarcode(barcodeRef.current, value, {
         format: "EAN13",
         displayValue: true,
+        height: 30,
+        width: 2,
       });
     }
   }, [value]);

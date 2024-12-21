@@ -1,6 +1,7 @@
 "use server";
 
 import prisma from "@/prisma/client";
+import { BarInfo } from "@/lib/htmlUtils";
 
 const generate12DigitBarcode = async () => {
   let barcode = "";
@@ -24,9 +25,9 @@ const generate8DigitAccessKey = async () => {
   // rest of them will be upper case letter and digit except I, O, 0, 1
   const allowedChars = "23456789ABCDEFGHJKLMNPQRSTUVWXYZ";
   let accessKey = "";
-  const year = new Date().getFullYear().toString().substr(-2);
+  const year = new Date().getFullYear().toString().substring(2);
   accessKey += year;
-  for (let i = 0; i < 4; i++) {
+  for (let i = 0; i < 6; i++) {
     accessKey += allowedChars.charAt(
       Math.floor(Math.random() * allowedChars.length),
     );
@@ -43,13 +44,34 @@ const generate8DigitAccessKey = async () => {
   return accessKey;
 };
 
-export const createNewFile = async () => {
-  const newFile = await prisma.file.create({
-    data: {
-      name: "test",
-      accessKey: await generate8DigitAccessKey(),
-      barcode: await generate12DigitBarcode(),
-    },
-  });
-  return newFile;
+export const getBarInfo = async (
+  pages: number,
+  onlyBarcode: boolean,
+): Promise<BarInfo> => {
+  // ToDo: Improve performance of this function
+  const barInfo: BarInfo = { pages: [] };
+  for (let page = 0; page < pages; page++) {
+    const barPages = [];
+    for (let row = 0; row < 10; row++) {
+      const barRows = [];
+      for (let col = 0; col < (onlyBarcode ? 3 : 1); col++) {
+        const newFile = await prisma.file.create({
+          data: {
+            name: "test",
+            accessKey: await generate8DigitAccessKey(),
+            barcode: await generate12DigitBarcode(),
+          },
+        });
+        barRows.push({
+          onlyBarcode,
+          barcode: newFile.barcode,
+          qrcode: newFile.accessKey,
+        });
+      }
+      barPages.push(barRows);
+    }
+    barInfo.pages.push(barPages);
+  }
+
+  return barInfo;
 };

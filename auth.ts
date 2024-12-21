@@ -43,9 +43,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       },
     }),
     Google({
-      profile(profile) {
-        return { ...profile, role: profile.role ?? Role.USER };
-      },
       allowDangerousEmailAccountLinking: true,
     }),
   ],

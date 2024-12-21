@@ -16,8 +16,8 @@ const UserForm = ({ user, offices }: Props) => {
       role: user?.role || Role.USER,
       email: user?.email || "",
       name: user?.name || "",
-      uniqueID: user?.uniqueID || "",
-      officeId: user?.officeId || "",
+      uniqueID: user?.uniqueID || undefined,
+      officeId: user?.officeId || undefined,
     });
 
   const onSubmit = async (data: UserFormData) => {

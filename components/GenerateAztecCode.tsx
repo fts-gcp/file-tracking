@@ -5,7 +5,7 @@ interface Props {
 }
 
 const GenerateAztecCode = ({ value }: Props) => {
-  return <QRCodeSVG value={value} level="M" />;
+  return <QRCodeSVG value={value} height={70} level="M" />;
 };
 
 export default GenerateAztecCode;

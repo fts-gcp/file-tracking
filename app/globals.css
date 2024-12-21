@@ -95,3 +95,10 @@ body {
 .input-error {
     @apply border border-destructive;
 }
+
+.a4-paper {
+    width: 794px; /* Width at 96 DPI */
+    height: 1123px; /* Height at 96 DPI */
+    border: 1px solid black;
+    margin: 0 auto;
+}

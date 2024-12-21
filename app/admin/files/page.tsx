@@ -1,5 +1,5 @@
 import prisma from "@/prisma/client";
-import GenerateBarcode from "@/app/GenerateBarcode";
+import GenerateBarcode from "@/components/GenerateBarcode";
 import Link from "next/link";
 
 const FilesPage = async () => {

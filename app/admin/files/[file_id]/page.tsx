@@ -1,4 +1,4 @@
-import GenerateBarcode from "@/app/GenerateBarcode";
+import GenerateBarcode from "@/components/GenerateBarcode";
 import prisma from "@/prisma/client";
 import { notFound } from "next/navigation";
 import UpdateUniqueId from "@/app/admin/files/[file_id]/UpdateUniqueId";
