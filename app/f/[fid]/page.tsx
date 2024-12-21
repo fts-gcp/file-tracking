@@ -44,29 +44,37 @@ const FileDetailsPage = async ({ params }: Props) => {
   });
 
   return (
-    <div className={"flex flex-col items-center mt-10"}>
-      <div className={"max-w-2xl"}>
-        <h1 className={"text-lg font-bold"}>
-          File Name / UID: {file.name || file.accessKey}
-        </h1>
-      </div>
-      {movements.length > 0 && (
-        <Timeline
-          events={movements.map((m) => ({
-            title: m.office.name,
-            description: m.comment || undefined,
-            date: m.createdAt.toLocaleDateString(),
-          }))}
-        />
-      )}
-      {!movements.length && (
-        <div className="text-center w-full">
-          <h1 className="text-2xl font-bold text-destructive">
-            Your File is not scanned yet. Please ensure that the barcode is
-            scanned by office staff.
+    <div className={"mt-2"}>
+      <p className={"text-3xl text-blue-400 font-bold text-center "}>
+        Begum Rokeya University, Rangpur
+      </p>
+      <p className={"text-3xl text-blue-400 font-bold text-center "}>
+        File Tracking System
+      </p>
+      <div className={"flex flex-col items-center mt-10"}>
+        <div className={"max-w-2xl"}>
+          <h1 className={"text-lg font-bold"}>
+            File Name / UID: {file.name || file.accessKey}
           </h1>
         </div>
-      )}
+        {movements.length > 0 && (
+          <Timeline
+            events={movements.map((m) => ({
+              title: m.office.name,
+              description: m.comment || undefined,
+              date: m.createdAt.toLocaleDateString(),
+            }))}
+          />
+        )}
+        {!movements.length && (
+          <div className="text-center w-full">
+            <h1 className="text-2xl font-bold text-destructive">
+              Your File is not scanned yet. Please ensure that the barcode is
+              scanned by office staff.
+            </h1>
+          </div>
+        )}
+      </div>
     </div>
   );
 };
