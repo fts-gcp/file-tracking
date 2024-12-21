@@ -9,7 +9,7 @@ export const updateFileUser = async (fileId: string, uniqueID: string) => {
       id: fileId,
     },
   });
-  const user = await prisma.user.findUnique({
+  const user = await prisma.user.findFirst({
     where: {
       uniqueID,
     },
@@ -24,7 +24,7 @@ export const updateFileUser = async (fileId: string, uniqueID: string) => {
     data: {
       user: {
         connect: {
-          uniqueID,
+          id: user.id,
         },
       },
     },
