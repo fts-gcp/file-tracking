@@ -42,7 +42,12 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         return user;
       },
     }),
-    Google({ allowDangerousEmailAccountLinking: true }),
+    Google({
+      profile(profile) {
+        return { ...profile, role: profile.role ?? Role.USER };
+      },
+      allowDangerousEmailAccountLinking: true,
+    }),
   ],
   callbacks: {
     async jwt({ token, user }) {
@@ -63,9 +68,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             email: session.user.email!,
           },
         });
-        // @ts-expect-error This is a valid assignment
         session.user.role = dbUser?.role || Role.USER;
-        // @ts-expect-error This is a valid assignment
         session.user.id = dbUser?.id;
       }
       return session;

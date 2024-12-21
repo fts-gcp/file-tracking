@@ -7,9 +7,10 @@ import {
   DecodeHintType,
   NotFoundException,
 } from "@zxing/library";
+import { redirect } from "next/navigation";
 
 const ScanBarcode: React.FC = () => {
-  const [barcode, setBarcode] = useState("");
+  const [qrCode, setQrCode] = useState("");
   const videoRef = useRef<HTMLVideoElement>(null);
   const [videoInputDevices, setVideoInputDevices] = useState<MediaDeviceInfo[]>(
     [],
@@ -64,7 +65,10 @@ const ScanBarcode: React.FC = () => {
         videoRef.current,
         (result, err) => {
           if (result) {
-            setBarcode(result.getText());
+            if (result.getText().startsWith("http")) {
+              redirect(result.getText());
+            }
+            setQrCode(result.getText());
           }
           if (err && !(err instanceof NotFoundException)) {
             console.error(err);
@@ -79,10 +83,12 @@ const ScanBarcode: React.FC = () => {
   }, [selectedDeviceId]);
 
   return (
-    <div>
-      <video ref={videoRef} style={{ width: "300px" }} />
+    <div className={"flex flex-col items-center"}>
+      <video ref={videoRef} className={"rounded-xl mt-5 w-96"} />
       <select
-        className={"text-black"}
+        className={
+          "text-black bg-white border border-gray-300 rounded-lg py-2 px-4  w-96 mt-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
+        }
         onChange={(e) => setSelectedDeviceId(e.target.value)}
         value={selectedDeviceId}
       >
@@ -92,7 +98,7 @@ const ScanBarcode: React.FC = () => {
           </option>
         ))}
       </select>
-      <p>Barcode: {barcode}</p>
+      <p>QR Code: {qrCode}</p>
     </div>
   );
 };

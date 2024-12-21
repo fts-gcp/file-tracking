@@ -11,6 +11,8 @@ export default {
   theme: {
     extend: {
       colors: {
+        azureBlue: "#0071B5",
+        lightAzureBlue: "#afdaf4",
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
         card: {
@@ -22,7 +24,7 @@ export default {
           foreground: "hsl(var(--popover-foreground))",
         },
         primary: {
-          DEFAULT: "hsl(var(--primary))",
+          DEFAULT: "hsl(#0071B5)",
           foreground: "hsl(var(--primary-foreground))",
         },
         secondary: {
