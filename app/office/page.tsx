@@ -8,8 +8,7 @@ const OfficePage = async () => {
   if (!session) {
     redirect("/api/auth/signin?redirect=/office");
   }
-  // @ts-expect-error This expression is correctly handled
-  if (session.user?.role !== Role.STAFF) {
+  if (session.user?.role in [Role.ADMIN, Role.STAFF]) {
     redirect("/api/auth/signin?redirect=/office");
   }
   return (
