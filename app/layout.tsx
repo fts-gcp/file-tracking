@@ -27,11 +27,25 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-[#F6F7F7] mx-2 min-h-full`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-[#F6F7F7] mx-2`}
       >
         <div className="background-image"></div>
-        <Navbar />
-        {children}
+        <div
+          style={{
+            minHeight: "92vh",
+          }}
+        >
+          <Navbar />
+          <div className={"mt-2"}>
+            <p className={"text-3xl text-blue-400 font-bold text-center "}>
+              Begum Rokeya University, Rangpur
+            </p>
+            <p className={"text-3xl text-blue-400 font-bold text-center "}>
+              File Tracking System
+            </p>
+            {children}
+          </div>
+        </div>
         <Footer />
       </body>
     </html>

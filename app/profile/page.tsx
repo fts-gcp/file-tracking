@@ -82,11 +82,15 @@ const ProfilePage = async () => {
       <h2 className={"mt-5 text-2xl text-azureBlue font-bold"}>Recent Files</h2>
       <CustomTable
         headers={["Date", "Title", "File Status"]}
-        data={files.map((file) => [
-          new Date(file.createdAt).toLocaleDateString(),
-          file.name || file.accessKey,
-          file.status,
-        ])}
+        data={{
+          rows: files.map((file) => ({
+            cols: [
+              new Date(file.createdAt).toLocaleDateString(),
+              file.name || file.accessKey,
+              file.status,
+            ],
+          })),
+        }}
       />
       <Pagination>
         <PaginationContent>
