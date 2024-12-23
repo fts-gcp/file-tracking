@@ -12,6 +12,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import Spinner from "@/components/Spinner";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Textarea as TxtArea } from "@/components/ui/textarea";
+
 import Select, { GroupBase } from "react-select";
 
 const FaEye = () => {
@@ -180,11 +182,9 @@ const useFormComponents = <T extends FieldValues>(
   }
 
   const Textarea = ({ name }: TextAreaProps) => (
-    <div className="form-control">
-      <label className="label">
-        <span className="label-text">{reformatString(name)}</span>
-      </label>
-      <textarea
+    <div>
+      <label className="font-bold">{reformatString(name)}</label>
+      <TxtArea
         className={`shadow border border-gray-300 ${
           errors[name] ? "input-error" : ""
         }`}
@@ -273,7 +273,7 @@ const useFormComponents = <T extends FieldValues>(
 
   const SubmitBtn = ({ label }: { label: string }) => (
     <div className="flex justify-center my-5">
-      <button
+      <Button
         className={
           "bg-green-600 shadow hover:bg-green-600/70 px-3 py-1 rounded-lg text-lg"
         }
@@ -281,7 +281,7 @@ const useFormComponents = <T extends FieldValues>(
         disabled={isSubmitting}
       >
         {isSubmitting && <Spinner />} {label}
-      </button>
+      </Button>
     </div>
   );
   return {

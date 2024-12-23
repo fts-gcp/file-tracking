@@ -3,7 +3,7 @@
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { updateFileUser } from "@/app/admin/files/file.actions";
+import { updateFileUser } from "@/lib/actions/file.actions";
 
 interface Props {
   file_id: string;

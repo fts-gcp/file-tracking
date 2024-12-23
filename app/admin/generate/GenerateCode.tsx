@@ -2,8 +2,8 @@
 
 import { useState } from "react";
 import { generateBarcodePDF } from "@/lib/htmlUtils";
-import { getBarInfo } from "@/app/admin/generate/file.actions";
 import Spinner from "@/components/Spinner";
+import { getBarInfo } from "@/lib/actions/file.actions";
 
 const GenerateCode = () => {
   const [loading, setLoading] = useState<boolean>(false);
