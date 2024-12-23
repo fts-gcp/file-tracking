@@ -3,15 +3,7 @@ import { redirect } from "next/navigation";
 import prisma from "@/prisma/client";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import CustomTable from "@/components/CustomTable";
-import {
-  Pagination,
-  PaginationContent,
-  PaginationEllipsis,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-} from "@/components/ui/pagination";
+import Status from "@/components/Status";
 
 const ProfilePage = async () => {
   const session = await auth();
@@ -28,6 +20,7 @@ const ProfilePage = async () => {
     redirect("/api/auth/signin?redirect=/profile");
   }
 
+  // ToDo: Implement pagination
   const files = await prisma.file.findMany({
     where: {
       userId: user.id,
@@ -40,13 +33,6 @@ const ProfilePage = async () => {
 
   return (
     <div className={"flex flex-col items-center mt-2"}>
-      <p className={"text-3xl text-blue-400 font-bold text-center "}>
-        Begum Rokeya University, Rangpur
-      </p>
-      <p className={"text-3xl text-blue-400 font-bold text-center "}>
-        File Tracking System
-      </p>
-
       <div
         className={
           "grid grid-cols-1 md:grid-cols-3 max-w-6xl mt-10 items-center"
@@ -79,43 +65,23 @@ const ProfilePage = async () => {
           </div>
         </div>
       </div>
-      <h2 className={"mt-5 text-2xl text-azureBlue font-bold"}>Recent Files</h2>
-      <CustomTable
-        headers={["Date", "Title", "File Status"]}
-        data={{
-          rows: files.map((file) => ({
-            cols: [
-              new Date(file.createdAt).toLocaleDateString(),
-              file.name || file.accessKey,
-              file.status,
-            ],
-          })),
-        }}
-      />
-      <Pagination>
-        <PaginationContent>
-          <PaginationItem>
-            <PaginationPrevious href="#" />
-          </PaginationItem>
-          <PaginationItem>
-            <PaginationLink href="#">1</PaginationLink>
-          </PaginationItem>
-          <PaginationItem>
-            <PaginationLink href="#" isActive>
-              2
-            </PaginationLink>
-          </PaginationItem>
-          <PaginationItem>
-            <PaginationLink href="#">3</PaginationLink>
-          </PaginationItem>
-          <PaginationItem>
-            <PaginationEllipsis />
-          </PaginationItem>
-          <PaginationItem>
-            <PaginationNext href="#" />
-          </PaginationItem>
-        </PaginationContent>
-      </Pagination>
+      <div className={"w-full md:w-[550px]"}>
+        <h2 className={"mt-5 text-3xl text-azureBlue font-bold"}>
+          Recent Files
+        </h2>
+        <CustomTable
+          headers={["Date", "Title", "File Status"]}
+          data={{
+            rows: files.map((file, index) => ({
+              cols: [
+                new Date(file.createdAt).toLocaleDateString(),
+                file.name || file.accessKey,
+                <Status key={index} value={file.status} />,
+              ],
+            })),
+          }}
+        />
+      </div>
     </div>
   );
 };

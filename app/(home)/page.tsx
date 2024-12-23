@@ -17,8 +17,8 @@ const HomePage = async () => {
   }
 
   return (
-    <div className="flex flex-col items-center justify-center h-[90vh]">
-      <div className={"-mt-[30vh]"}>
+    <div className="flex flex-col items-center justify-center">
+      <div className={"mt-5 md:mt-20"}>
         <UIDSearch />
       </div>
     </div>

@@ -6,6 +6,7 @@ import { FileStatus, Role } from "@prisma/client";
 import { checkPermission } from "@/lib/utils";
 import { BarInfo } from "@/lib/htmlUtils";
 import { auth } from "@/auth";
+import { FileFormData } from "@/lib/schemas/fileSchema";
 
 export const updateFileUser = async (fileId: string, uniqueID: string) => {
   await checkPermission(Role.STAFF, `/f/${fileId}`);
@@ -38,15 +39,24 @@ export const updateFileUser = async (fileId: string, uniqueID: string) => {
   return true;
 };
 
-export const deleteFiles = async (fileIds: string[]) => {
-  await checkPermission(Role.ADMIN);
+export const updateFile = async (id: string, data: FileFormData) => {
+  // ToDo: Only allow staff of current office to update file
+  await checkPermission(Role.STAFF);
 
-  await prisma.file.deleteMany({
+  const file = await prisma.file.findUnique({
     where: {
-      id: {
-        in: fileIds,
-      },
+      id,
     },
+  });
+  if (!file) {
+    notFound();
+  }
+
+  await prisma.file.update({
+    where: {
+      id,
+    },
+    data,
   });
   return true;
 };
@@ -162,7 +172,7 @@ export const receiveFile = async (barcode: string) => {
   }
   const user = await prisma.user.findFirst({
     where: {
-      id: session.user,
+      id: session.user?.id,
     },
     include: {
       office: true,
@@ -179,8 +189,9 @@ export const receiveFile = async (barcode: string) => {
     },
   });
   if (!file) {
-    return false;
+    return "File not found";
   }
+  // try {
   const lastMovement = await prisma.movement.findFirst({
     where: {
       fileId: file.id,
@@ -190,7 +201,7 @@ export const receiveFile = async (barcode: string) => {
     },
   });
   if (lastMovement?.officeId === user.office.id) {
-    return false;
+    return "Same";
   }
   if (file.status !== FileStatus.PROCESSING) {
     await prisma.file.update({
@@ -204,9 +215,19 @@ export const receiveFile = async (barcode: string) => {
   }
   await prisma.movement.create({
     data: {
+      prevId: lastMovement?.officeId,
       fileId: file.id,
       officeId: user.office.id,
     },
   });
-  return true;
+
+  await prisma.movement.update({
+    where: {
+      id: lastMovement?.id,
+    },
+    data: {
+      nextId: user.office.id,
+    },
+  });
+  return "Received";
 };
