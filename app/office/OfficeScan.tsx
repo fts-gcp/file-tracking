@@ -1,8 +1,8 @@
 "use client";
 
 import ScanEAN13 from "@/components/ScanEAN13";
-import { receiveFile } from "@/app/office/office.actions";
 import { useState } from "react";
+import { receiveFile } from "@/lib/actions/office.actions";
 
 const OfficeScan = () => {
   const [scanned, setScanned] = useState(false);

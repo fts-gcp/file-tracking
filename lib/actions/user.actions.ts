@@ -3,7 +3,7 @@
 
 import prisma from "@/prisma/client";
 import { notFound } from "next/navigation";
-import { UserFormData } from "@/app/admin/user/userSchema";
+import { UserFormData } from "@/lib/schemas/userSchema";
 import { User } from "@prisma/client";
 
 export const createOrUpdateUser = async (

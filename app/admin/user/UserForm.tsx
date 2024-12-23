@@ -1,8 +1,8 @@
 "use client";
 
 import useFormComponents from "@/components/useFormComponents";
-import userSchema, { UserFormData } from "@/app/admin/user/userSchema";
-import { createOrUpdateUser } from "@/app/admin/user/user.actions";
+import userSchema, { UserFormData } from "@/lib/schemas/userSchema";
+import { createOrUpdateUser } from "@/lib/actions/user.actions";
 import { Office, Role, User } from "@prisma/client";
 
 interface Props {
