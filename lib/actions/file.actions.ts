@@ -132,6 +132,7 @@ export const getBarInfo = async (
   const numberOfCodes = pages * 10 * (onlyBarcode ? 3 : 1);
   const barcodes = await generate12DigitBarcode(numberOfCodes);
   const accessKeys = await generate8DigitAccessKey(numberOfCodes);
+  console.log(barcodes, accessKeys);
   const toBeAddedToDB = [];
   const barInfo: BarInfo = { pages: [] };
   for (let page = 0; page < pages; page++) {
@@ -142,8 +143,9 @@ export const getBarInfo = async (
         const index =
           page * 10 * (onlyBarcode ? 3 : 1) + row * (onlyBarcode ? 3 : 1) + col;
         toBeAddedToDB.push({
+          name: "test",
           accessKey: accessKeys[index],
-          barcode: accessKeys[index],
+          barcode: barcodes[index],
         });
         barRows.push({
           onlyBarcode,
