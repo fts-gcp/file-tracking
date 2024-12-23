@@ -1,4 +1,4 @@
-// user.actions.ts
+// users.actions.ts
 "use server";
 
 import prisma from "@/prisma/client";

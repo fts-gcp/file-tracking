@@ -13,15 +13,9 @@ export interface BarInfo {
 }
 
 export const generateBarcodePDF = async ({ pages }: BarInfo) => {
-  const getScreenDPI = (): number => {
-    const deviceWidth = screen.width * window.devicePixelRatio;
-    const physicalWidthInInches = screen.width / window.devicePixelRatio / 96;
-    return deviceWidth / physicalWidthInInches;
-  };
-
   const A4_WIDTH = 210;
   const A4_HEIGHT = 297;
-  const DPI = getScreenDPI();
+  const DPI = 96;
   const MM_TO_PX = DPI / 25.4;
 
   const doc = new jsPDF({ unit: "mm", format: "a4" });

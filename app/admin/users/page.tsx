@@ -1,5 +1,5 @@
 // AddUserPage.tsx
-import UserForm from "@/app/admin/user/UserForm";
+import UserForm from "@/app/admin/users/UserForm";
 import prisma from "@/prisma/client";
 
 const AddUserPage = async () => {

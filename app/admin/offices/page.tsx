@@ -9,7 +9,7 @@ const AddOfficePage = async () => {
       <h1 className={"text-center text-3xl text-blue-800 font-bold mt-10 mb-3"}>
         Office List
       </h1>
-      <Link href={`/admin/office/new`} className={"text-blue-600 mb-3"}>
+      <Link href={`/admin/offices/new`} className={"text-blue-600 mb-3"}>
         Add new Office
       </Link>
       <CustomTable
@@ -21,7 +21,7 @@ const AddOfficePage = async () => {
               office.details || "N/A",
               <Link
                 key={index}
-                href={`/admin/office/${office.id}`}
+                href={`/admin/offices/${office.id}`}
                 className={"text-blue-600"}
               >
                 View

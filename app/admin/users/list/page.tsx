@@ -11,7 +11,7 @@ const UserListPage = async () => {
         <div key={user.id}>
           <h2>{user.email}</h2>
           <p>{user.role}</p>
-          <Link href={`/admin/user/${user.id}`}>Edit</Link>
+          <Link href={`/admin/users/${user.id}`}>Edit</Link>
         </div>
       ))}
     </div>

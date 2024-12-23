@@ -40,7 +40,7 @@ export const updateFileUser = async (fileId: string, uniqueID: string) => {
 };
 
 export const updateFile = async (id: string, data: FileFormData) => {
-  // ToDo: Only allow staff of current office to update file
+  // ToDo: Only allow staff of current offices to update file
   await checkPermission(Role.STAFF);
 
   const file = await prisma.file.findUnique({
