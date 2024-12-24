@@ -31,8 +31,8 @@ const UserForm = ({ user, offices }: Props) => {
   };
 
   return (
-    <div>
-      <form onSubmit={handleSubmit(onSubmit)}>
+    <div className={"flex justify-center"}>
+      <form onSubmit={handleSubmit(onSubmit)} className={"w-96"}>
         <Input name="uniqueID" label="Unique ID" />
         <Input name="name" label="Name" />
         <Select

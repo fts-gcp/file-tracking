@@ -1,15 +1,37 @@
-// AddUserPage.tsx
-import UserForm from "@/app/admin/users/UserForm";
 import prisma from "@/prisma/client";
+import Link from "next/link";
+import CustomTable from "@/components/CustomTable";
 
-const AddUserPage = async () => {
-  const offices = await prisma.office.findMany();
+const UserListPage = async () => {
+  const users = await prisma.user.findMany();
+
   return (
-    <div>
-      <h1>Add User</h1>
-      <UserForm offices={offices} />
+    <div className={"flex flex-col items-center"}>
+      <h1 className={"text-center text-3xl text-blue-800 font-bold mt-10 mb-3"}>
+        User List
+      </h1>
+      <CustomTable
+        headers={["UID", "Role", "Name", "Email", "Actions"]}
+        data={{
+          rows: users.map((user, index) => ({
+            cols: [
+              user.uniqueID || "N/A",
+              user.role,
+              user.name,
+              user.email,
+              <Link
+                key={index}
+                href={`/admin/users/${user.id}`}
+                className={"text-blue-600"}
+              >
+                View
+              </Link>,
+            ],
+          })),
+        }}
+      />
     </div>
   );
 };
 
-export default AddUserPage;
+export default UserListPage;

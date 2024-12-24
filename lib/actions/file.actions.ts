@@ -7,6 +7,7 @@ import { checkPermission } from "@/lib/utils";
 import { BarInfo } from "@/lib/htmlUtils";
 import { auth } from "@/auth";
 import { FileFormData } from "@/lib/schemas/fileSchema";
+import { sendFTSEmail } from "./email.actions";
 
 export const updateFileUser = async (fileId: string, uniqueID: string) => {
   await checkPermission(Role.STAFF, `/f/${fileId}`);
@@ -40,7 +41,6 @@ export const updateFileUser = async (fileId: string, uniqueID: string) => {
 };
 
 export const updateFile = async (id: string, data: FileFormData) => {
-  // ToDo: Only allow staff of current offices to update file
   await checkPermission(Role.STAFF);
 
   const file = await prisma.file.findUnique({
@@ -58,6 +58,63 @@ export const updateFile = async (id: string, data: FileFormData) => {
     },
     data,
   });
+
+  try {
+    if (
+      (data.status === FileStatus.APPROVED &&
+        file.status !== FileStatus.APPROVED) ||
+      (data.status === FileStatus.REJECTED &&
+        file.status !== FileStatus.REJECTED) ||
+      (data.status === FileStatus.MORE_INFO_REQUIRED &&
+        file.status !== FileStatus.MORE_INFO_REQUIRED)
+    ) {
+      const user = await prisma.user.findUnique({
+        where: {
+          id: file.userId || "fsdafsdafsdf",
+        },
+      });
+      const lastMovement = await prisma.movement.findFirst({
+        where: {
+          fileId: file.id,
+        },
+        orderBy: {
+          createdAt: "desc",
+        },
+        include: {
+          office: true,
+        },
+      });
+      const firstMovement = await prisma.movement.findFirst({
+        where: {
+          fileId: file.id,
+        },
+        orderBy: {
+          createdAt: "asc",
+        },
+      });
+      const action =
+        data.status === FileStatus.APPROVED
+          ? "Approved"
+          : data.status === FileStatus.REJECTED
+            ? "Rejected"
+            : "requested more information";
+      const created = firstMovement?.createdAt || file.createdAt;
+      const actioned = new Date();
+      if (user && user.email) {
+        await sendFTSEmail({
+          action: action,
+          userName: user.name || "Unknown",
+          userEmail: user.email,
+          fileName: file.name || file.accessKey,
+          dateSubmitted: `${created.toLocaleDateString()} ${created.toLocaleTimeString()}`,
+          lastActionDate: `${actioned.toLocaleDateString()} ${actioned.toLocaleTimeString()}`,
+          currentOffice: lastMovement?.office.name || "N/A",
+        });
+      }
+    }
+  } catch (e) {
+    console.error(e);
+  }
   return true;
 };
 
@@ -132,7 +189,6 @@ export const getBarInfo = async (
   const numberOfCodes = pages * 10 * (onlyBarcode ? 3 : 1);
   const barcodes = await generate12DigitBarcode(numberOfCodes);
   const accessKeys = await generate8DigitAccessKey(numberOfCodes);
-  console.log(barcodes, accessKeys);
   const toBeAddedToDB = [];
   const barInfo: BarInfo = { pages: [] };
   for (let page = 0; page < pages; page++) {
@@ -143,7 +199,6 @@ export const getBarInfo = async (
         const index =
           page * 10 * (onlyBarcode ? 3 : 1) + row * (onlyBarcode ? 3 : 1) + col;
         toBeAddedToDB.push({
-          name: "test",
           accessKey: accessKeys[index],
           barcode: barcodes[index],
         });

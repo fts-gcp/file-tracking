@@ -4,8 +4,24 @@ import prisma from "@/prisma/client";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import CustomTable from "@/components/CustomTable";
 import Status from "@/components/Status";
+import Link from "next/link";
+import CustomPagination from "@/components/CustomPagination";
+import { isNumber } from "@/lib/utils";
 
-const ProfilePage = async () => {
+interface Props {
+  searchParams: Promise<{
+    page?: string;
+    limit?: string;
+    search?: string;
+  }>;
+}
+
+const ProfilePage = async ({ searchParams }: Props) => {
+  const { page: _page, limit: _limit, search } = await searchParams;
+  const page = parseInt(_page || "1");
+  const limit = parseInt(_limit || "5");
+  const searchName = isNumber(search) ? "" : search;
+  const searchBarcode = isNumber(search) ? search : "";
   const session = await auth();
   if (!session || !session.user || !session.user.id) {
     redirect("/api/auth/signin?redirect=/profile");
@@ -20,15 +36,32 @@ const ProfilePage = async () => {
     redirect("/api/auth/signin?redirect=/profile");
   }
 
-  // ToDo: Implement pagination
   const files = await prisma.file.findMany({
     where: {
       userId: user.id,
+      name: {
+        contains: searchName,
+      },
+      barcode: {
+        contains: searchBarcode,
+      },
     },
     orderBy: {
       createdAt: "desc",
     },
-    take: 5,
+    take: limit,
+    skip: (page - 1) * limit,
+  });
+  const total = await prisma.file.count({
+    where: {
+      userId: user.id,
+      name: {
+        contains: searchName,
+      },
+      barcode: {
+        contains: searchBarcode,
+      },
+    },
   });
 
   return (
@@ -70,17 +103,23 @@ const ProfilePage = async () => {
           Recent Files
         </h2>
         <CustomTable
-          headers={["Date", "Title", "File Status"]}
+          isSearchable={true}
+          searchValue={search}
+          headers={["Date", "Title", "File Status", "Actions"]}
           data={{
             rows: files.map((file, index) => ({
               cols: [
                 new Date(file.createdAt).toLocaleDateString(),
                 file.name || file.accessKey,
                 <Status key={index} value={file.status} />,
+                <Link href={`/f/${file.id}`} key={index}>
+                  View
+                </Link>,
               ],
             })),
           }}
         />
+        <CustomPagination page={page} limit={limit} total={total} />
       </div>
     </div>
   );

@@ -2,12 +2,27 @@ import prisma from "@/prisma/client";
 import { notFound } from "next/navigation";
 import Timeline from "@/components/Timeline";
 import FileForm from "@/app/f/[fid]/FileForm";
+import { auth } from "@/auth";
+import { Role } from "@prisma/client";
 
 interface Props {
   params: Promise<{ fid: string }>;
 }
 
 const FileDetailsPage = async ({ params }: Props) => {
+  const session = await auth();
+  const user = await prisma.user.findUnique({
+    where: {
+      id: session?.user?.id,
+    },
+    include: {
+      office: true,
+    },
+  });
+  if (!user) {
+    return notFound();
+  }
+
   const { fid } = await params;
   let file = null;
   if (fid.length === 8) {
@@ -63,6 +78,9 @@ const FileDetailsPage = async ({ params }: Props) => {
     include: {
       office: true,
     },
+    orderBy: {
+      createdAt: "asc",
+    },
   });
 
   const users = await prisma.user.findMany({
@@ -75,6 +93,9 @@ const FileDetailsPage = async ({ params }: Props) => {
       uniqueID: "asc",
     },
   });
+
+  const isAllowedToEdit =
+    user.role === Role.ADMIN || movements.at(-1)?.officeId === user.officeId;
 
   return (
     <div className={"mt-2"}>
@@ -97,9 +118,11 @@ const FileDetailsPage = async ({ params }: Props) => {
           </div>
         )}
 
-        <div className={"w-96"}>
-          <FileForm file={file} users={users} />
-        </div>
+        {isAllowedToEdit && (
+          <div className={"w-96"}>
+            <FileForm file={file} users={users} />
+          </div>
+        )}
       </div>
     </div>
   );

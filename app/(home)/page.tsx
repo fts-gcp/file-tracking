@@ -2,7 +2,6 @@ import { auth } from "@/auth";
 import { Role } from "@prisma/client";
 import { redirect } from "next/navigation";
 import UIDSearch from "@/app/(home)/UIDSearch";
-import prisma from "@/prisma/client";
 
 const HomePage = async () => {
   const session = await auth();
@@ -16,16 +15,6 @@ const HomePage = async () => {
   if (!!session?.user) {
     redirect("/profile/");
   }
-
-  await prisma.file.deleteMany({
-    where: {
-      name: {
-        not: {
-          startsWith: "test",
-        },
-      },
-    },
-  });
 
   return (
     <div className="flex flex-col items-center justify-center">

@@ -96,7 +96,7 @@ export const generateBarcodePDF = async ({ pages }: BarInfo) => {
 
     root.render(<>{barcodes}</>);
 
-    await new Promise((resolve) => setTimeout(resolve, 500));
+    await new Promise((resolve) => setTimeout(resolve, 200));
 
     await html2canvas(tempContainer).then((canvas) => {
       const imgData = canvas.toDataURL("image/png");
