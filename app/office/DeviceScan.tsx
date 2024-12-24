@@ -4,9 +4,11 @@ import { receiveFile } from "@/lib/actions/file.actions";
 import { useEffect, useRef, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { useRouter } from "nextjs-toploader/app";
+import { Button } from "@/components/ui/button";
 
 const DeviceScan = () => {
   const [barcode, setBarcode] = useState<string>("");
+  const [scanNow, setScanNow] = useState<boolean>(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
 
@@ -33,31 +35,43 @@ const DeviceScan = () => {
 
   return (
     <div className={"w-72"}>
-      <Input
-        type={"text"}
-        ref={inputRef}
-        onChange={(e) => setBarcode(e.target.value)}
-        placeholder="Scan Barcode"
-        autoFocus={true}
-        value={barcode}
-        onKeyDown={async (e) => {
-          if (e.key === "Enter") {
-            e.preventDefault();
-            if (barcode.length != 13) {
-              setBarcode("");
-              return;
+      {scanNow && (
+        <Input
+          type={"text"}
+          ref={inputRef}
+          onChange={(e) => setBarcode(e.target.value)}
+          placeholder="Scan Barcode"
+          autoFocus={true}
+          value={barcode}
+          onKeyDown={async (e) => {
+            if (e.key === "Enter") {
+              e.preventDefault();
+              if (barcode.length != 13) {
+                setBarcode("");
+                return;
+              }
+              console.log(barcode);
+              const res = await receiveFile(barcode);
+              if (res === "Same" || res === "Received") {
+                router.push(`/f/${barcode}`);
+              } else {
+                setBarcode("");
+                alert("Something went wrong");
+              }
             }
-            console.log(barcode);
-            const res = await receiveFile(barcode);
-            if (res === "Same" || res === "Received") {
-              router.push(`/f/${barcode}`);
-            } else {
-              setBarcode("");
-              alert("Something went wrong");
-            }
+          }}
+        />
+      )}
+      <Button
+        onClick={() => {
+          setScanNow(!scanNow);
+          if (inputRef.current) {
+            inputRef.current.focus();
           }
         }}
-      />
+      >
+        Toggle Barcode Scanner
+      </Button>
     </div>
   );
 };
