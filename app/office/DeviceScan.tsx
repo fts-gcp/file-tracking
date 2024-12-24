@@ -5,8 +5,10 @@ import { useEffect, useRef, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { useRouter } from "nextjs-toploader/app";
 import { Button } from "@/components/ui/button";
+import Spinner from "@/components/Spinner";
 
 const DeviceScan = () => {
+  const [loading, setLoading] = useState<boolean>(false);
   const [barcode, setBarcode] = useState<string>("");
   const [scanNow, setScanNow] = useState<boolean>(false);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -51,6 +53,7 @@ const DeviceScan = () => {
                 return;
               }
               console.log(barcode);
+              setLoading(true);
               const res = await receiveFile(barcode);
               if (res === "Same" || res === "Received") {
                 router.push(`/f/${barcode}`);
@@ -70,7 +73,7 @@ const DeviceScan = () => {
           }
         }}
       >
-        Toggle Barcode Scanner
+        {loading && <Spinner />} Toggle Barcode Scanner
       </Button>
     </div>
   );
