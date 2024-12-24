@@ -4,6 +4,7 @@ import useFormComponents from "@/components/useFormComponents";
 import userSchema, { UserFormData } from "@/lib/schemas/userSchema";
 import { createOrUpdateUser } from "@/lib/actions/user.actions";
 import { Office, Role, User } from "@prisma/client";
+import { useRouter } from "nextjs-toploader/app";
 
 interface Props {
   user?: User;
@@ -19,11 +20,13 @@ const UserForm = ({ user, offices }: Props) => {
       uniqueID: user?.uniqueID || undefined,
       officeId: user?.officeId || undefined,
     });
+  const router = useRouter();
 
   const onSubmit = async (data: UserFormData) => {
     setIsSubmitting(true);
     try {
       await createOrUpdateUser(data, user?.id);
+      router.push("/admin/users");
     } catch (error) {
       console.error(error);
     }

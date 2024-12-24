@@ -44,3 +44,8 @@ const StaffListPage = async () => {
 };
 
 export default StaffListPage;
+
+export const metadata = {
+  title: "Staff List",
+  description: "List of all staff in the office",
+};

@@ -52,11 +52,13 @@ model Movement {
   comment  String?
   fileId   String  @db.ObjectId
   officeId String  @db.ObjectId
+  userId String? @db.ObjectId
 
   createdAt DateTime @default(now())
 
   file   File   @relation(fields: [fileId], references: [id])
   office Office @relation(fields: [officeId], references: [id])
+  user User? @relation(fields: [userId], references: [id])
 }
 
 enum Role {
@@ -81,7 +83,8 @@ model User {
 
   accounts      Account[]
   Authenticator Authenticator[]
-  files File[]
+  files     File[]
+  movements Movement[]
   office        Office?         @relation(fields: [officeId], references: [id])
   sessions      Session[]
 }

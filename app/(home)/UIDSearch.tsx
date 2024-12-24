@@ -2,22 +2,37 @@
 
 import Image from "next/image";
 import { useState } from "react";
-import { redirect } from "next/navigation";
-import Link from "next/link";
+import { useRouter } from "nextjs-toploader/app";
 
 const UidSearch = () => {
   const [uid, setUid] = useState("");
+  const router = useRouter();
+  if (uid.length > 8) {
+    setUid(uid.slice(0, 8));
+  }
   return (
     <div>
       <div className={"flex justify-center"}>
         <div className={"flex mt-10"}>
           <input
+            min={8}
+            max={8}
             value={uid}
-            onChange={(e) => setUid(e.target.value)}
+            onChange={(e) => setUid(e.target.value.toUpperCase())}
             placeholder={"Enter UID"}
             className={
               "w-96 bg-lightAzureBlue h-14 rounded-full ps-8 text-2xl font-bold focus:border-none"
             }
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                e.preventDefault();
+                if (uid.length === 8) {
+                  router.push(`/f/${uid}`);
+                } else {
+                  alert("UID should be 8 characters long");
+                }
+              }
+            }}
           />
           <Image
             className={
@@ -27,20 +42,15 @@ const UidSearch = () => {
             alt={"Search Icon"}
             width={60}
             height={40}
-            onClick={() => redirect(`/files?uid=${uid}`)}
+            onClick={() => {
+              if (uid.length === 8) {
+                router.push(`/f/${uid}`);
+              } else {
+                alert("UID should be 8 characters long");
+              }
+            }}
           />
         </div>
-      </div>
-      <div className={"flex justify-center"}>
-        <Link href={"/scan/aztec/"}>
-          <button
-            className={
-              "bg-lightAzureBlue h-14 w-96 rounded-full mt-10 font-bold text-2xl"
-            }
-          >
-            Search Using QR Code
-          </button>
-        </Link>
       </div>
     </div>
   );

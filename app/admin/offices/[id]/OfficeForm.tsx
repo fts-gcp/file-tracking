@@ -6,10 +6,10 @@ import {
   createOrUpdateOffice,
   deleteOffice,
 } from "@/lib/actions/office.actions";
-import { redirect } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import Spinner from "@/components/Spinner";
 import { Office } from "@prisma/client";
+import { useRouter } from "nextjs-toploader/app";
 
 interface Props {
   office?: Office;
@@ -28,10 +28,12 @@ const OfficeForm = ({ office }: Props) => {
     details: office?.details || "",
   });
 
+  const router = useRouter();
+
   const onSubmit = async (data: OfficeFormData) => {
     setIsSubmitting(true);
     await createOrUpdateOffice(data, office?.id);
-    redirect("/admin/office");
+    router.push("/admin/offices");
   };
 
   return (
@@ -50,7 +52,7 @@ const OfficeForm = ({ office }: Props) => {
               onClick={async () => {
                 setIsSubmitting(true);
                 await deleteOffice(office.id);
-                redirect("/admin/office");
+                router.push("/admin/offices");
               }}
             >
               {isSubmitting && <Spinner />}Delete

@@ -1,8 +1,9 @@
 import prisma from "@/prisma/client";
 import CustomTable from "@/components/CustomTable";
 import Link from "next/link";
+import { Metadata } from "next";
 
-const AddOfficePage = async () => {
+const OfficeListPage = async () => {
   const offices = await prisma.office.findMany();
   return (
     <div className={"flex flex-col items-center"}>
@@ -34,4 +35,9 @@ const AddOfficePage = async () => {
   );
 };
 
-export default AddOfficePage;
+export default OfficeListPage;
+
+export const metadata: Metadata = {
+  title: "Office List",
+  description: "List of all offices in the system",
+};

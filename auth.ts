@@ -10,7 +10,7 @@ export async function hashPassword(password: string): Promise<string> {
   return sha256(password).toString();
 }
 
-export const { handlers, signIn, signOut, auth } = NextAuth({
+export const { handlers, auth } = NextAuth({
   adapter: PrismaAdapter(prisma),
   providers: [
     Credentials({

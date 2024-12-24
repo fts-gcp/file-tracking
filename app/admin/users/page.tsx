@@ -1,6 +1,7 @@
 import prisma from "@/prisma/client";
 import Link from "next/link";
 import CustomTable from "@/components/CustomTable";
+import { Metadata } from "next";
 
 const UserListPage = async () => {
   const users = await prisma.user.findMany();
@@ -10,6 +11,9 @@ const UserListPage = async () => {
       <h1 className={"text-center text-3xl text-blue-800 font-bold mt-10 mb-3"}>
         User List
       </h1>
+      <Link href={`/admin/users/new`} className={"text-blue-600 mb-3"}>
+        Add new User
+      </Link>
       <CustomTable
         headers={["UID", "Role", "Name", "Email", "Actions"]}
         data={{
@@ -35,3 +39,8 @@ const UserListPage = async () => {
 };
 
 export default UserListPage;
+
+export const metadata: Metadata = {
+  title: "User List",
+  description: "List of all users in the system",
+};

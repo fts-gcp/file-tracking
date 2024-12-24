@@ -62,3 +62,8 @@ const OfficePage = async () => {
 };
 
 export default OfficePage;
+
+export const metadata = {
+  title: "Office",
+  description: "Office dashboard",
+};

@@ -4,6 +4,7 @@ import Timeline from "@/components/Timeline";
 import FileForm from "@/app/f/[fid]/FileForm";
 import { auth } from "@/auth";
 import { Role } from "@prisma/client";
+import type { Metadata } from "next";
 
 interface Props {
   params: Promise<{ fid: string }>;
@@ -11,17 +12,16 @@ interface Props {
 
 const FileDetailsPage = async ({ params }: Props) => {
   const session = await auth();
-  const user = await prisma.user.findUnique({
-    where: {
-      id: session?.user?.id,
-    },
-    include: {
-      office: true,
-    },
-  });
-  if (!user) {
-    return notFound();
-  }
+  const user = session?.user?.id
+    ? await prisma.user.findUnique({
+        where: {
+          id: session?.user?.id,
+        },
+        include: {
+          office: true,
+        },
+      })
+    : null;
 
   const { fid } = await params;
   let file = null;
@@ -95,7 +95,9 @@ const FileDetailsPage = async ({ params }: Props) => {
   });
 
   const isAllowedToEdit =
-    user.role === Role.ADMIN || movements.at(-1)?.officeId === user.officeId;
+    user &&
+    (user?.role === Role.ADMIN ||
+      movements.at(-1)?.officeId === user?.officeId);
 
   return (
     <div className={"mt-2"}>
@@ -129,3 +131,8 @@ const FileDetailsPage = async ({ params }: Props) => {
 };
 
 export default FileDetailsPage;
+
+export const metadata: Metadata = {
+  title: "File Details",
+  description: "Details of a file",
+};

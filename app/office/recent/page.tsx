@@ -5,6 +5,7 @@ import GenerateBarcode from "@/components/GenerateBarcode";
 import Status from "@/components/Status";
 import Link from "next/link";
 import CustomPagination from "@/components/CustomPagination";
+import { Metadata } from "next";
 
 interface Props {
   searchParams: Promise<{
@@ -63,7 +64,7 @@ const RecentFilesPage = async ({ searchParams }: Props) => {
               <Link
                 key={index}
                 className={"text-blue-600"}
-                href={`/admin/files/${file.id}`}
+                href={`/f/${file.id}`}
               >
                 View it
               </Link>,
@@ -77,3 +78,8 @@ const RecentFilesPage = async ({ searchParams }: Props) => {
 };
 
 export default RecentFilesPage;
+
+export const metadata: Metadata = {
+  title: "Recent Files",
+  description: "List of all recently transferred files to other offices",
+};

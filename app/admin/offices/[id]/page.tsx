@@ -1,6 +1,8 @@
 import OfficeForm from "./OfficeForm";
 import { notFound } from "next/navigation";
 import prisma from "@/prisma/client";
+import { cache } from "react";
+import type { Metadata } from "next";
 
 interface Props {
   params: Promise<{
@@ -8,7 +10,15 @@ interface Props {
   }>;
 }
 
-const AddOfficePage = async ({ params }: Props) => {
+const fetchOffice = cache((id: string) =>
+  prisma.office.findUnique({
+    where: {
+      id: id,
+    },
+  }),
+);
+
+const AddOrUpdateOfficePage = async ({ params }: Props) => {
   const { id } = await params;
   if (id === "new") {
     return (
@@ -20,11 +30,7 @@ const AddOfficePage = async ({ params }: Props) => {
       </div>
     );
   }
-  const office = await prisma.office.findUnique({
-    where: {
-      id: id,
-    },
-  });
+  const office = await fetchOffice(id);
   if (!office) {
     notFound();
   }
@@ -38,4 +44,25 @@ const AddOfficePage = async ({ params }: Props) => {
   );
 };
 
-export default AddOfficePage;
+export default AddOrUpdateOfficePage;
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { id } = await params;
+  if (id === "new") {
+    return {
+      title: "Add new Office",
+      description: "Add a new office to the system",
+    };
+  }
+  const office = await fetchOffice(id);
+  if (!office) {
+    return {
+      title: "Office Not Found",
+      description: "The requested office does not exist.",
+    };
+  }
+  return {
+    title: `Update Office: ${office.name}`,
+    description: `Update details of the office with ID: ${office.id}`,
+  };
+}

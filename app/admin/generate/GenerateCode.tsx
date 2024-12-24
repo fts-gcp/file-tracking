@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { generateBarcodePDF } from "@/lib/htmlUtils";
 import Spinner from "@/components/Spinner";
 import { getBarInfo } from "@/lib/actions/file.actions";
@@ -8,6 +8,20 @@ import { getBarInfo } from "@/lib/actions/file.actions";
 const GenerateCode = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [pages, setPages] = useState(1);
+
+  useEffect(() => {
+    const handleBeforeUnload = (event: BeforeUnloadEvent) => {
+      event.preventDefault();
+      event.returnValue =
+        "PDFs are being generated. Are you sure you want to leave?";
+    };
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+    };
+  }, []);
 
   return (
     <div>
@@ -22,7 +36,7 @@ const GenerateCode = () => {
           onChange={(e) => setPages(parseInt(e.target.value))}
           type="number"
           min={1}
-          max={10}
+          max={1000}
           className={
             "ms-5 w-16 bg-lightAzureBlue h-14 rounded-xl ps-2 text-2xl font-bold focus:border-none"
           }
@@ -60,7 +74,8 @@ const GenerateCode = () => {
       </div>
       {loading && (
         <div className={"flex justify-center text-red-600 text-xl font-bold"}>
-          Generating Pages will take some time. Please be patient
+          Generating Pages will take some time. Please be patient. Don&#39;t
+          reload while PDF are shown right side.
         </div>
       )}
     </div>

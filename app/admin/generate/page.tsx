@@ -1,4 +1,5 @@
 import GenerateCode from "@/app/admin/generate/GenerateCode";
+import { Metadata } from "next";
 
 const GenerateBarcodePage = () => {
   return (
@@ -19,3 +20,8 @@ const GenerateBarcodePage = () => {
 };
 
 export default GenerateBarcodePage;
+
+export const metadata: Metadata = {
+  title: "Generate Barcode and QR Code",
+  description: "Generate barcode for files to be tracked",
+};

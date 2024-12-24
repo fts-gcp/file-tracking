@@ -24,6 +24,7 @@ const FileForm = ({ file, users }: Props) => {
   const onSubmit = async (data: FileFormData) => {
     setIsSubmitting(true);
     await updateFile(file.id, data);
+    window.location.reload();
     setIsSubmitting(false);
   };
 

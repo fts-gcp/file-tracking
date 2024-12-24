@@ -5,6 +5,7 @@ import CustomTable from "@/components/CustomTable";
 import { isNumber } from "@/lib/utils";
 import Status from "@/components/Status";
 import CustomPagination from "@/components/CustomPagination";
+import type { Metadata } from "next";
 
 interface Props {
   searchParams: Promise<{
@@ -77,3 +78,8 @@ const FilesPage = async ({ searchParams }: Props) => {
   );
 };
 export default FilesPage;
+
+export const metadata: Metadata = {
+  title: "Files",
+  description: "List of files in the system",
+};

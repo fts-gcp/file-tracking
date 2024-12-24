@@ -52,6 +52,34 @@ export const updateFile = async (id: string, data: FileFormData) => {
     notFound();
   }
 
+  const session = await auth();
+  const user = session?.user?.id
+    ? await prisma.user.findFirst({
+        where: {
+          id: session.user?.id,
+        },
+      })
+    : null;
+  if (!user) {
+    redirect("/api/auth/signin");
+  }
+
+  const lastMovement = await prisma.movement.findFirst({
+    where: {
+      fileId: file.id,
+    },
+    orderBy: {
+      createdAt: "desc",
+    },
+    include: {
+      office: true,
+    },
+  });
+
+  if (user.role != Role.ADMIN && lastMovement?.officeId !== user.officeId) {
+    return false;
+  }
+
   await prisma.file.update({
     where: {
       id,
@@ -71,17 +99,6 @@ export const updateFile = async (id: string, data: FileFormData) => {
       const user = await prisma.user.findUnique({
         where: {
           id: file.userId || "fsdafsdafsdf",
-        },
-      });
-      const lastMovement = await prisma.movement.findFirst({
-        where: {
-          fileId: file.id,
-        },
-        orderBy: {
-          createdAt: "desc",
-        },
-        include: {
-          office: true,
         },
       });
       const firstMovement = await prisma.movement.findFirst({
@@ -275,16 +292,19 @@ export const receiveFile = async (barcode: string) => {
       prevId: lastMovement?.officeId,
       fileId: file.id,
       officeId: user.office.id,
+      userId: user.id,
     },
   });
 
-  await prisma.movement.update({
-    where: {
-      id: lastMovement?.id,
-    },
-    data: {
-      nextId: user.office.id,
-    },
-  });
+  if (lastMovement) {
+    await prisma.movement.update({
+      where: {
+        id: lastMovement?.id,
+      },
+      data: {
+        nextId: user.office.id,
+      },
+    });
+  }
   return "Received";
 };

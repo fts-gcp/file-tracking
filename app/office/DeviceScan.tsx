@@ -1,13 +1,14 @@
 "use client";
 
 import { receiveFile } from "@/lib/actions/file.actions";
-import { redirect } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { Input } from "@/components/ui/input";
+import { useRouter } from "nextjs-toploader/app";
 
 const DeviceScan = () => {
   const [barcode, setBarcode] = useState<string>("");
   const inputRef = useRef<HTMLInputElement>(null);
+  const router = useRouter();
 
   useEffect(() => {
     // Focus the input field when the component mounts
@@ -49,7 +50,7 @@ const DeviceScan = () => {
             console.log(barcode);
             const res = await receiveFile(barcode);
             if (res === "Same" || res === "Received") {
-              redirect(`/f/${barcode}`);
+              router.push(`/f/${barcode}`);
             } else {
               setBarcode("");
               alert("Something went wrong");

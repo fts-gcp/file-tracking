@@ -28,7 +28,7 @@ export const checkPermission = async (
     }
   }
   if (allowedRole == Role.STAFF) {
-    if (session.user.role === Role.STAFF) {
+    if (session.user.role !== Role.STAFF) {
       unauthorized();
     }
   }
@@ -47,5 +47,4 @@ export const checkPermission = async (
       unauthorized();
     }
   }
-  redirect(`/api/auth/signin?redirect=${uri || "/"}`);
 };

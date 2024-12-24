@@ -3,10 +3,11 @@
 import ScanEAN13 from "@/components/ScanEAN13";
 import { useState } from "react";
 import { receiveFile } from "@/lib/actions/file.actions";
-import { redirect } from "next/navigation";
+import { useRouter } from "nextjs-toploader/app";
 
 const OfficeScan = () => {
   const [scanned, setScanned] = useState(false);
+  const router = useRouter();
   return (
     <div>
       <h1>Office Scan</h1>
@@ -17,7 +18,7 @@ const OfficeScan = () => {
             const res = await receiveFile(val);
             console.log(res);
             if (res === "Same" || res === "Received") {
-              redirect(`/f/${val}`);
+              router.push(`/f/${val}`);
             } else {
               alert("Something went wrong");
             }
