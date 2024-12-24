@@ -5,6 +5,7 @@ import FileForm from "@/app/f/[fid]/FileForm";
 import { auth } from "@/auth";
 import { Role } from "@prisma/client";
 import type { Metadata } from "next";
+import DeviceScan from "@/app/office/DeviceScan";
 
 interface Props {
   params: Promise<{ fid: string }>;
@@ -102,6 +103,11 @@ const FileDetailsPage = async ({ params }: Props) => {
   return (
     <div className={"mt-2"}>
       <div className={"flex flex-col items-center mt-10"}>
+        {(user?.role === Role.STAFF || user?.role === Role.ADMIN) && (
+          <div className={"flex justify-center mt-10"}>
+            <DeviceScan />
+          </div>
+        )}
         {movements.length > 0 && (
           <Timeline
             events={movements.map((m) => ({
