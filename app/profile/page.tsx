@@ -7,6 +7,7 @@ import Status from "@/components/Status";
 import Link from "next/link";
 import CustomPagination from "@/components/CustomPagination";
 import { isNumber } from "@/lib/utils";
+import { Metadata } from "next";
 
 interface Props {
   searchParams: Promise<{
@@ -126,3 +127,8 @@ const ProfilePage = async ({ searchParams }: Props) => {
 };
 
 export default ProfilePage;
+
+export const metadata: Metadata = {
+  title: "Profile",
+  description: "User profile",
+};

@@ -40,7 +40,7 @@ const OfficePage = async () => {
       <p className={"text-3xl text-blue-400 font-bold text-center my-10"}>
         {office.name}
       </p>
-      <div className={"flex justify-center gap-4"}>
+      <div className={"flex flex-wrap justify-center gap-4"}>
         <Link href={"/office/recent"}>
           <Button>View Recent Files</Button>
         </Link>

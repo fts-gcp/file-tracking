@@ -7,7 +7,7 @@ const AdminHomePage = async () => {
       <p className={"text-3xl text-blue-400 font-bold text-center my-10"}>
         Admin Panel
       </p>
-      <div className={"flex justify-center gap-4"}>
+      <div className={"flex flex-wrap justify-center gap-4"}>
         <Link href={"/admin/files"}>
           <Button>Files</Button>
         </Link>
