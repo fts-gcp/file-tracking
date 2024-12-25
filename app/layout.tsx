@@ -30,7 +30,7 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-[#F6F7F7] mx-2`}
       >
-        <NextTopLoader height={5} color={"green"} />
+        <NextTopLoader height={10} color={"red"} />
         <div className="background-image"></div>
         <div
           style={{

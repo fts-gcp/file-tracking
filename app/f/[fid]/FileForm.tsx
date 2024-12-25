@@ -4,13 +4,15 @@ import useFormComponents from "@/components/useFormComponents";
 import fileSchema, { FileFormData } from "@/lib/schemas/fileSchema";
 import { File as FileModel, FileStatus } from "@prisma/client";
 import { updateFile } from "@/lib/actions/file.actions";
+import { searchUserForReactSelect } from "@/lib/actions/user.actions";
+import { useEffect, useState } from "react";
 
 interface Props {
   file: FileModel;
-  users: { id: string; name: string | null; uniqueID: string | null }[];
+  selectedUsers: { value: string; label: string }[];
 }
 
-const FileForm = ({ file, users }: Props) => {
+const FileForm = ({ file, selectedUsers }: Props) => {
   const { handleSubmit, setIsSubmitting, Input, Select, Textarea, SubmitBtn } =
     useFormComponents<FileFormData>(fileSchema, {
       fileType: file.fileType || "",
@@ -20,6 +22,14 @@ const FileForm = ({ file, users }: Props) => {
       status: file?.status || FileStatus.NOT_RECEIVED,
       userId: file?.userId || "",
     });
+  const [defaultOptions, setDefaultOptions] = useState<
+    { value: string; label: string }[]
+  >([]);
+  useEffect(() => {
+    searchUserForReactSelect("").then((res) => {
+      setDefaultOptions(res);
+    });
+  }, []);
 
   const onSubmit = async (data: FileFormData) => {
     setIsSubmitting(true);
@@ -50,10 +60,9 @@ const FileForm = ({ file, users }: Props) => {
         />
         <Select
           name="userId"
-          options={users.map((user) => ({
-            label: `${user.uniqueID} (${user.name})`,
-            value: user.id,
-          }))}
+          loadOptions={searchUserForReactSelect}
+          defaultOptions={defaultOptions}
+          options={selectedUsers}
         />
         <SubmitBtn label={"Update File"} />
       </form>

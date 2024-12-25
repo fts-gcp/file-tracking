@@ -48,3 +48,16 @@ export const checkPermission = async (
     }
   }
 };
+
+export const getFullDateTime = (timezone: string, time: Date): string => {
+  return new Intl.DateTimeFormat("en-US", {
+    timeZone: timezone,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+    hour12: true,
+  }).format(time);
+};

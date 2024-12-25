@@ -14,7 +14,8 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Textarea as TxtArea } from "@/components/ui/textarea";
 
-import Select, { GroupBase } from "react-select";
+import { GroupBase } from "react-select";
+import AsyncSelect from "react-select/async";
 
 const FaEye = () => {
   return (
@@ -217,6 +218,8 @@ const useFormComponents = <T extends FieldValues>(
     name: Path<T>;
     label?: string;
     options: SelectItem[];
+    defaultOptions?: SelectItem[];
+    loadOptions?: (inputValue: string) => Promise<SelectItem[]>;
     isMulti?: boolean;
     isSearchable?: boolean;
   }
@@ -227,6 +230,8 @@ const useFormComponents = <T extends FieldValues>(
     options,
     isMulti,
     isSearchable,
+    defaultOptions,
+    loadOptions,
   }: SelectProps) => {
     const partedName = name.split(".");
     let error = errors;
@@ -249,9 +254,11 @@ const useFormComponents = <T extends FieldValues>(
           control={control}
           render={({ field }) => {
             return (
-              <Select<SelectItem, boolean, GroupBase<SelectItem>>
+              <AsyncSelect<SelectItem, boolean, GroupBase<SelectItem>>
                 isSearchable={isSearchable}
                 options={options}
+                defaultOptions={defaultOptions}
+                loadOptions={loadOptions}
                 onChange={(value: any) => {
                   if (isMulti) {
                     field.onChange(value.map((item: any) => item.value));

@@ -4,7 +4,6 @@ import { Role } from "@prisma/client";
 import prisma from "@/prisma/client";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import WebScanner from "@/app/office/WebScanner";
 import DeviceScan from "@/app/office/DeviceScan";
 
 const OfficePage = async () => {
@@ -52,10 +51,7 @@ const OfficePage = async () => {
         </Link>
       </div>
       <div className={"flex justify-center mt-10"}>
-        <DeviceScan />
-      </div>
-      <div className={"flex justify-center mt-10"}>
-        <WebScanner />
+        <DeviceScan noButton={true} />
       </div>
     </div>
   );

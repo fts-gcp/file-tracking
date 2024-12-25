@@ -34,3 +34,37 @@ export const createOrUpdateUser = async (
   }
   return res;
 };
+
+export const searchUserForReactSelect = async (search: string) => {
+  const res = await prisma.user.findMany({
+    where: {
+      OR: [
+        {
+          name: {
+            contains: search,
+          },
+        },
+        {
+          email: {
+            contains: search,
+          },
+        },
+        {
+          uniqueID: {
+            contains: search,
+          },
+        },
+      ],
+    },
+    select: {
+      id: true,
+      name: true,
+      uniqueID: true,
+    },
+    take: 10,
+  });
+  return res.map((user) => ({
+    value: user.id,
+    label: `${user.uniqueID} (${user.name})`,
+  }));
+};

@@ -10,6 +10,7 @@ interface EmailDetails {
   dateSubmitted: string;
   lastActionDate: string;
   currentOffice: string;
+  comment?: string;
 }
 
 const generateTextEmail = (details: EmailDetails): string => `
@@ -40,6 +41,7 @@ const generateHtmlEmail = (details: EmailDetails): string => `
             font-family: Arial, sans-serif;
             line-height: 1.6;
             color: #333;
+            font-size: 16px;
         }
         .container {
             max-width: 600px;
@@ -55,6 +57,14 @@ const generateHtmlEmail = (details: EmailDetails): string => `
         p {
             margin: 10px 0;
         }
+        
+        .comment {
+            background-color: yellow;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        
         .details {
             background-color: #eef;
             padding: 10px;
@@ -69,6 +79,7 @@ const generateHtmlEmail = (details: EmailDetails): string => `
         <h2>File ${details.action} - ${details.fileName}</h2>
         <p>Dear ${details.userName},</p>
         <p>We are pleased to inform you that your file, “${details.fileName},” has been ${details.action}. Below are the details of your file for your reference:</p>
+        ${details.comment ? `<div><h2>The Following information are needed to continue: </h2><pre class="comment">${details.comment}</pre></div>` : ""}
         <div class="details">
             <p><strong>File Name:</strong> ${details.fileName}</p>
             <p><strong>Date Submitted:</strong> ${details.dateSubmitted}</p>

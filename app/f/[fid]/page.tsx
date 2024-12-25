@@ -6,6 +6,7 @@ import { auth } from "@/auth";
 import { Role } from "@prisma/client";
 import type { Metadata } from "next";
 import DeviceScan from "@/app/office/DeviceScan";
+import { getFullDateTime } from "@/lib/utils";
 
 interface Props {
   params: Promise<{ fid: string }>;
@@ -84,16 +85,26 @@ const FileDetailsPage = async ({ params }: Props) => {
     },
   });
 
-  const users = await prisma.user.findMany({
-    select: {
-      id: true,
-      name: true,
-      uniqueID: true,
-    },
-    orderBy: {
-      uniqueID: "asc",
-    },
-  });
+  const selectedUsers = (
+    file.userId
+      ? await prisma.user.findMany({
+          where: {
+            id: file.userId,
+          },
+          select: {
+            id: true,
+            name: true,
+            uniqueID: true,
+          },
+          orderBy: {
+            uniqueID: "asc",
+          },
+        })
+      : []
+  ).map((user) => ({
+    value: user.id,
+    label: `${user.uniqueID} (${user.name})`,
+  }));
 
   const isAllowedToEdit =
     user &&
@@ -113,7 +124,7 @@ const FileDetailsPage = async ({ params }: Props) => {
             events={movements.map((m) => ({
               title: m.office.name,
               description: m.comment || undefined,
-              date: `${m.createdAt.toLocaleDateString()} ${m.createdAt.toLocaleTimeString()}`,
+              date: `${getFullDateTime("Asia/Dhaka", m.createdAt)}`,
             }))}
           />
         )}
@@ -128,7 +139,7 @@ const FileDetailsPage = async ({ params }: Props) => {
 
         {isAllowedToEdit && (
           <div className={"w-96"}>
-            <FileForm file={file} users={users} />
+            <FileForm file={file} selectedUsers={selectedUsers} />
           </div>
         )}
       </div>

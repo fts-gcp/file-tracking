@@ -3,7 +3,7 @@
 import prisma from "@/prisma/client";
 import { notFound, redirect } from "next/navigation";
 import { FileStatus, Role } from "@prisma/client";
-import { checkPermission } from "@/lib/utils";
+import { checkPermission, getFullDateTime } from "@/lib/utils";
 import { BarInfo } from "@/lib/htmlUtils";
 import { auth } from "@/auth";
 import { FileFormData } from "@/lib/schemas/fileSchema";
@@ -41,8 +41,6 @@ export const updateFileUser = async (fileId: string, uniqueID: string) => {
 };
 
 export const updateFile = async (id: string, data: FileFormData) => {
-  await checkPermission(Role.STAFF);
-
   const file = await prisma.file.findUnique({
     where: {
       id,
@@ -52,30 +50,7 @@ export const updateFile = async (id: string, data: FileFormData) => {
     notFound();
   }
 
-  const session = await auth();
-  const user = session?.user?.id
-    ? await prisma.user.findFirst({
-        where: {
-          id: session.user?.id,
-        },
-      })
-    : null;
-  if (!user) {
-    redirect("/api/auth/signin");
-  }
-
-  const lastMovement = await prisma.movement.findFirst({
-    where: {
-      fileId: file.id,
-    },
-    orderBy: {
-      createdAt: "desc",
-    },
-    include: {
-      office: true,
-    },
-  });
-
+  const { user, lastMovement } = await getUserFileLastMovement(file.barcode);
   if (user.role != Role.ADMIN && lastMovement?.officeId !== user.officeId) {
     return false;
   }
@@ -96,11 +71,13 @@ export const updateFile = async (id: string, data: FileFormData) => {
       (data.status === FileStatus.MORE_INFO_REQUIRED &&
         file.status !== FileStatus.MORE_INFO_REQUIRED)
     ) {
-      const user = await prisma.user.findUnique({
-        where: {
-          id: file.userId || "fsdafsdafsdf",
-        },
-      });
+      const user = file.userId
+        ? await prisma.user.findUnique({
+            where: {
+              id: file.userId,
+            },
+          })
+        : null;
       const firstMovement = await prisma.movement.findFirst({
         where: {
           fileId: file.id,
@@ -237,7 +214,8 @@ export const getBarInfo = async (
   return barInfo;
 };
 
-export const receiveFile = async (barcode: string) => {
+const getUserFileLastMovement = async (barcode: string) => {
+  barcode = barcode.length === 13 ? barcode.slice(0, -1) : barcode;
   await checkPermission(Role.STAFF);
 
   const session = await auth();
@@ -248,22 +226,21 @@ export const receiveFile = async (barcode: string) => {
     where: {
       id: session.user?.id,
     },
-    include: {
-      office: true,
-    },
   });
-  if (!user || !user.office) {
+  if (!user) {
     redirect("/api/auth/signin");
   }
   // remove last extra character
-  barcode = barcode.slice(0, -1);
   const file = await prisma.file.findFirst({
     where: {
       barcode: barcode,
     },
+    include: {
+      user: true,
+    },
   });
   if (!file) {
-    return "File not found";
+    notFound();
   }
   // try {
   const lastMovement = await prisma.movement.findFirst({
@@ -273,11 +250,24 @@ export const receiveFile = async (barcode: string) => {
     orderBy: {
       createdAt: "desc",
     },
+    include: {
+      office: true,
+    },
   });
-  if (lastMovement?.officeId === user.office.id) {
+  return { file, user, lastMovement };
+};
+
+export const receiveFile = async (barcode: string) => {
+  barcode = barcode.length === 13 ? barcode.slice(0, -1) : barcode;
+  const { file, user, lastMovement } = await getUserFileLastMovement(barcode);
+  if (!user.officeId) return "Unauthorized";
+  if (lastMovement?.officeId === user.officeId) {
     return "Same";
   }
-  if (file.status !== FileStatus.PROCESSING) {
+  if (
+    file.status === FileStatus.NOT_RECEIVED ||
+    file.status === FileStatus.MORE_INFO_REQUIRED
+  ) {
     await prisma.file.update({
       where: {
         barcode: barcode,
@@ -291,7 +281,7 @@ export const receiveFile = async (barcode: string) => {
     data: {
       prevId: lastMovement?.officeId,
       fileId: file.id,
-      officeId: user.office.id,
+      officeId: user.officeId,
       userId: user.id,
     },
   });
@@ -302,9 +292,132 @@ export const receiveFile = async (barcode: string) => {
         id: lastMovement?.id,
       },
       data: {
-        nextId: user.office.id,
+        nextId: user.officeId,
       },
     });
   }
   return "Received";
+};
+
+export const approveFile = async (barcode: string) => {
+  barcode = barcode.length === 13 ? barcode.slice(0, -1) : barcode;
+  const { file, user, lastMovement } = await getUserFileLastMovement(barcode);
+  if (user.role != Role.ADMIN && lastMovement?.officeId !== user.officeId) {
+    return false;
+  }
+
+  await prisma.file.update({
+    where: {
+      barcode: barcode,
+    },
+    data: {
+      status: FileStatus.APPROVED,
+    },
+  });
+
+  const firstMovement = await prisma.movement.findFirst({
+    where: {
+      fileId: file.id,
+    },
+    orderBy: {
+      createdAt: "asc",
+    },
+  });
+
+  if (file.user && file.user.email) {
+    await sendFTSEmail({
+      action: "Approved",
+      userName: user.name || "Unknown",
+      userEmail: file.user.email,
+      fileName: file.name || file.accessKey,
+      dateSubmitted: `${getFullDateTime("Asia/Dhaka", firstMovement?.createdAt || file.createdAt)}`,
+      lastActionDate: `${getFullDateTime("Asia/Dhaka", new Date())}`,
+      currentOffice: lastMovement?.office.name || "N/A",
+    });
+  }
+};
+
+export const rejectFile = async (barcode: string) => {
+  barcode = barcode.length === 13 ? barcode.slice(0, -1) : barcode;
+  const { file, user, lastMovement } = await getUserFileLastMovement(barcode);
+  if (user.role != Role.ADMIN && lastMovement?.officeId !== user.officeId) {
+    return false;
+  }
+
+  await prisma.file.update({
+    where: {
+      barcode: barcode,
+    },
+    data: {
+      status: FileStatus.REJECTED,
+    },
+  });
+
+  const firstMovement = await prisma.movement.findFirst({
+    where: {
+      fileId: file.id,
+    },
+    orderBy: {
+      createdAt: "asc",
+    },
+  });
+
+  if (file.user && file.user.email) {
+    await sendFTSEmail({
+      action: "Rejected",
+      userName: user.name || "Unknown",
+      userEmail: file.user.email,
+      fileName: file.name || file.accessKey,
+      dateSubmitted: `${getFullDateTime("Asia/Dhaka", firstMovement?.createdAt || file.createdAt)}`,
+      lastActionDate: `${getFullDateTime("Asia/Dhaka", new Date())}`,
+      currentOffice: lastMovement?.office.name || "N/A",
+    });
+  }
+};
+
+export const requestMoreInfo = async (barcode: string, comment: string) => {
+  barcode = barcode.length === 13 ? barcode.slice(0, -1) : barcode;
+  const { file, user, lastMovement } = await getUserFileLastMovement(barcode);
+  if (user.role != Role.ADMIN && lastMovement?.officeId !== user.officeId) {
+    return false;
+  }
+
+  await prisma.file.update({
+    where: {
+      barcode: barcode,
+    },
+    data: {
+      status: FileStatus.MORE_INFO_REQUIRED,
+    },
+  });
+
+  await prisma.movement.update({
+    where: {
+      id: lastMovement?.id,
+    },
+    data: {
+      comment,
+    },
+  });
+
+  const firstMovement = await prisma.movement.findFirst({
+    where: {
+      fileId: file.id,
+    },
+    orderBy: {
+      createdAt: "asc",
+    },
+  });
+  if (file.user && file.user.email) {
+    await sendFTSEmail({
+      action: "requested more information",
+      userName: user.name || "Unknown",
+      userEmail: file.user.email,
+      fileName: file.name || file.accessKey,
+      dateSubmitted: `${getFullDateTime("Asia/Dhaka", firstMovement?.createdAt || file.createdAt)}`,
+      lastActionDate: `${getFullDateTime("Asia/Dhaka", new Date())}`,
+      currentOffice: lastMovement?.office.name || "N/A",
+      comment,
+    });
+  }
 };
