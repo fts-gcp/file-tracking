@@ -33,7 +33,7 @@ const AvailableFilesPage = async ({ searchParams }: Props) => {
     where: {
       officeId: user!.officeId || "fsdfdsf",
       nextId: {
-        isSet: false,
+        not: null,
       },
     },
     orderBy: {

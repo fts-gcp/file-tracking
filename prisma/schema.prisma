@@ -1,5 +1,5 @@
 datasource db {
-  provider = "mongodb"
+  provider = "mysql"
   url      = env("DATABASE_URL")
 }
 
@@ -16,7 +16,7 @@ enum FileStatus {
 }
 
 model File {
-  id         String     @id @default(auto()) @map("_id") @db.ObjectId
+  id       String @id @default(uuid())
   accessKey  String     @unique
   barcode    String     @unique
   fileType String?
@@ -24,17 +24,17 @@ model File {
   department String?
   details    String?
   status     FileStatus @default(NOT_RECEIVED)
-  userId   String? @db.ObjectId
+  userId   String?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   movements Movement[]
-  user User? @relation(fields: [userId], references: [id])
+  user      User?      @relation(fields: [userId], references: [id])
 }
 
 model Office {
-  id      String  @id @default(auto()) @map("_id") @db.ObjectId
+  id      String @id @default(uuid())
   name    String
   details String?
 
@@ -46,19 +46,19 @@ model Office {
 }
 
 model Movement {
-  id       String  @id @default(auto()) @map("_id") @db.ObjectId
-  prevId   String? @db.ObjectId
-  nextId   String? @db.ObjectId
+  id       String  @id @default(uuid())
+  prevId   String?
+  nextId   String?
   comment  String?
-  fileId   String  @db.ObjectId
-  officeId String  @db.ObjectId
-  userId String? @db.ObjectId
+  fileId   String
+  officeId String
+  userId   String?
 
   createdAt DateTime @default(now())
 
   file   File   @relation(fields: [fileId], references: [id])
   office Office @relation(fields: [officeId], references: [id])
-  user User? @relation(fields: [userId], references: [id])
+  user   User?  @relation(fields: [userId], references: [id])
 }
 
 enum Role {
@@ -68,13 +68,13 @@ enum Role {
 }
 
 model User {
-  id            String    @id @default(auto()) @map("_id") @db.ObjectId
+  id       String @id @default(uuid())
   uniqueID String?
   name          String?
   email         String?   @unique
   emailVerified DateTime?
   image         String?
-  officeId      String?   @db.ObjectId
+  officeId String?
   password      String?
   role          Role      @default(USER)
 
@@ -85,45 +85,47 @@ model User {
   Authenticator Authenticator[]
   files     File[]
   movements Movement[]
-  office        Office?         @relation(fields: [officeId], references: [id])
+  office    Office?    @relation(fields: [officeId], references: [id])
   sessions      Session[]
 }
 
 model Account {
-  id                String  @id @default(auto()) @map("_id") @db.ObjectId
-  userId            String  @db.ObjectId
-  type              String
-  provider          String
-  providerAccountId String
-  refresh_token     String? @db.String
-  access_token      String? @db.String
-  expires_at        Int?
-  token_type        String?
-  scope             String?
-  id_token          String? @db.String
-  session_state     String?
+  id                       String  @id @default(cuid())
+  userId                   String  @unique
+  type                     String
+  provider                 String
+  providerAccountId        String
+  refresh_token            String? @db.Text
+  access_token             String? @db.Text
+  expires_at               Int?
+  token_type               String?
+  scope                    String?
+  id_token                 String? @db.Text
+  session_state            String?
+  refresh_token_expires_in Int?
+  user                     User?   @relation(fields: [userId], references: [id])
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-
   @@unique([provider, providerAccountId])
+  @@index([userId])
 }
 
 model Session {
-  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  id     String @id @default(cuid())
   sessionToken String   @unique
-  userId       String   @db.ObjectId
+  userId String
   expires      DateTime
-  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user   User   @relation(fields: [userId], references: [id])
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@index([userId])
 }
 
 model VerificationToken {
-  id         String   @id @default(auto()) @map("_id") @db.ObjectId
   identifier String
   token      String
   expires    DateTime
@@ -133,8 +135,8 @@ model VerificationToken {
 
 // Optional for WebAuthn support
 model Authenticator {
-  credentialID         String  @id @map("_id")
-  userId               String  @db.ObjectId
+  credentialID String @unique
+  userId       String
   providerAccountId    String
   credentialPublicKey  String
   counter              Int
@@ -144,5 +146,5 @@ model Authenticator {
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@unique([userId, credentialID])
+  @@id([userId, credentialID])
 }
