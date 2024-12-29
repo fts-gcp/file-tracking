@@ -11,6 +11,9 @@ export async function hashPassword(password: string): Promise<string> {
 }
 
 export const { handlers, auth } = NextAuth({
+  session: {
+    strategy: "jwt",
+  },
   adapter: PrismaAdapter(prisma),
   providers: [
     Credentials({

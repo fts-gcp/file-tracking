@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import Image from "next/image";
+import { useRouter } from "nextjs-toploader/app";
 
 interface Props {
   value: string;
@@ -10,6 +11,7 @@ interface Props {
 
 const SearchInput = ({ value }: Props) => {
   const [searchValue, setSearchValue] = useState(value);
+  const router = useRouter();
   return (
     <div className={"flex"}>
       <Input
@@ -22,7 +24,9 @@ const SearchInput = ({ value }: Props) => {
             const searchParams = new URLSearchParams(window.location.search);
             searchParams.set("search", searchValue);
             searchParams.set("page", "1");
-            window.location.href = `${window.location.pathname}?${searchParams.toString()}`;
+            router.push(
+              `${window.location.pathname}?${searchParams.toString()}`,
+            );
           }
         }}
       />
@@ -36,7 +40,7 @@ const SearchInput = ({ value }: Props) => {
           const searchParams = new URLSearchParams(window.location.search);
           searchParams.set("search", searchValue);
           searchParams.set("page", "1");
-          window.location.href = `${window.location.pathname}?${searchParams.toString()}`;
+          router.push(`${window.location.pathname}?${searchParams.toString()}`);
         }}
       />
     </div>
