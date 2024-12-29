@@ -4,7 +4,9 @@
 import prisma from "@/prisma/client";
 import { notFound } from "next/navigation";
 import { UserFormData } from "@/lib/schemas/userSchema";
-import { User } from "@prisma/client";
+import { Role, User } from "@prisma/client";
+import { checkPermission } from "@/lib/utils";
+import { hashPassword } from "@/auth";
 
 export const createOrUpdateUser = async (
   data: UserFormData,
@@ -33,6 +35,18 @@ export const createOrUpdateUser = async (
     });
   }
   return res;
+};
+
+export const setUserPassword = async (user_id: string, password: string) => {
+  await checkPermission(Role.ADMIN);
+  await prisma.user.update({
+    where: {
+      id: user_id,
+    },
+    data: {
+      password: await hashPassword(password),
+    },
+  });
 };
 
 export const searchUserForReactSelect = async (search: string) => {

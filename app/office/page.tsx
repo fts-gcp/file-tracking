@@ -41,7 +41,7 @@ const OfficePage = async () => {
       </p>
       <div className={"flex flex-wrap justify-center gap-4"}>
         <Link href={"/office/recent"}>
-          <Button>View Recent Files</Button>
+          <Button>View Transferred Files</Button>
         </Link>
         <Link href={"/office/available"}>
           <Button>View Available Files</Button>

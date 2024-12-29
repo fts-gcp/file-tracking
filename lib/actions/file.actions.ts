@@ -421,3 +421,26 @@ export const requestMoreInfo = async (barcode: string, comment: string) => {
     });
   }
 };
+
+export const searchOfficeForReactSelect = async (search: string) => {
+  const res = await prisma.office.findMany({
+    where: {
+      OR: [
+        {
+          name: {
+            contains: search,
+          },
+        },
+      ],
+    },
+    select: {
+      id: true,
+      name: true,
+    },
+    take: 10,
+  });
+  return res.map((office) => ({
+    value: office.id,
+    label: `${office.name}`,
+  }));
+};

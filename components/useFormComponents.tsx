@@ -218,7 +218,6 @@ const useFormComponents = <T extends FieldValues>(
     name: Path<T>;
     label?: string;
     options: SelectItem[];
-    defaultOptions?: SelectItem[];
     loadOptions?: (inputValue: string) => Promise<SelectItem[]>;
     isMulti?: boolean;
     isSearchable?: boolean;
@@ -230,7 +229,6 @@ const useFormComponents = <T extends FieldValues>(
     options,
     isMulti,
     isSearchable,
-    defaultOptions,
     loadOptions,
   }: SelectProps) => {
     const partedName = name.split(".");
@@ -257,7 +255,7 @@ const useFormComponents = <T extends FieldValues>(
               <AsyncSelect<SelectItem, boolean, GroupBase<SelectItem>>
                 isSearchable={isSearchable}
                 options={options}
-                defaultOptions={defaultOptions}
+                defaultOptions={options}
                 loadOptions={loadOptions}
                 onChange={(value: any) => {
                   if (isMulti) {

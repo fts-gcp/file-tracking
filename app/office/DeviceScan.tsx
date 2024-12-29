@@ -58,14 +58,20 @@ const DeviceScan = ({ noButton }: Props) => {
 
   const onSuccessfulScan = async (val: string) => {
     setLoading(true);
-    const res = await receiveFile(val);
-    if (res === "Same") {
-      setIsAlertOpen(true);
-    } else if (res === "Received") {
-      router.push(`/f/${val}`);
-    } else {
-      setBarcode("");
-      alert("Something went wrong");
+    try {
+      const res = await receiveFile(val);
+      if (res === "Same") {
+        setIsAlertOpen(true);
+      } else if (res === "Received") {
+        router.push(`/f/${val}`);
+      } else {
+        setBarcode("");
+        alert("Something went wrong");
+      }
+    } catch (error) {
+      alert("Wrong Barcode");
+      console.error(error);
+      window.location.reload();
     }
     setLoading(false);
   };

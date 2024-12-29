@@ -22,12 +22,17 @@ const FileForm = ({ file, selectedUsers }: Props) => {
       status: file?.status || FileStatus.NOT_RECEIVED,
       userId: file?.userId || "",
     });
-  const [defaultOptions, setDefaultOptions] = useState<
-    { value: string; label: string }[]
-  >([]);
+
+  const [defaultOptions, setDefaultOptions] =
+    useState<{ value: string; label: string }[]>(selectedUsers);
   useEffect(() => {
     searchUserForReactSelect("").then((res) => {
-      setDefaultOptions(res);
+      for (const user of res) {
+        if (!defaultOptions.find((option) => option.value === user.value)) {
+          defaultOptions.push(user);
+        }
+      }
+      setDefaultOptions(defaultOptions);
     });
   }, []);
 
@@ -46,6 +51,7 @@ const FileForm = ({ file, selectedUsers }: Props) => {
         <Input name="department" placeholder="Department" />
         <Textarea name="details" />
         <Select
+          isSearchable={false}
           name="status"
           options={[
             { label: "Not Received", value: FileStatus.NOT_RECEIVED },
@@ -61,8 +67,7 @@ const FileForm = ({ file, selectedUsers }: Props) => {
         <Select
           name="userId"
           loadOptions={searchUserForReactSelect}
-          defaultOptions={defaultOptions}
-          options={selectedUsers}
+          options={defaultOptions}
         />
         <SubmitBtn label={"Update File"} />
       </form>

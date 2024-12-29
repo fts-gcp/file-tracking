@@ -32,9 +32,7 @@ const AvailableFilesPage = async ({ searchParams }: Props) => {
   const movements = await prisma.movement.findMany({
     where: {
       officeId: user!.officeId || "fsdfdsf",
-      nextId: {
-        not: null,
-      },
+      nextId: null,
     },
     orderBy: {
       createdAt: "desc",

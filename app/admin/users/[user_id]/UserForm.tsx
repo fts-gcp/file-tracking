@@ -2,9 +2,17 @@
 
 import useFormComponents from "@/components/useFormComponents";
 import userSchema, { UserFormData } from "@/lib/schemas/userSchema";
-import { createOrUpdateUser } from "@/lib/actions/user.actions";
+import {
+  createOrUpdateUser,
+  setUserPassword,
+} from "@/lib/actions/user.actions";
 import { Office, Role, User } from "@prisma/client";
 import { useRouter } from "nextjs-toploader/app";
+import { searchOfficeForReactSelect } from "@/lib/actions/file.actions";
+import { useState } from "react";
+import { Input as BaseInput } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import Spinner from "@/components/Spinner";
 
 interface Props {
   user?: User;
@@ -12,14 +20,21 @@ interface Props {
 }
 
 const UserForm = ({ user, offices }: Props) => {
-  const { handleSubmit, setIsSubmitting, Input, SubmitBtn, Select } =
-    useFormComponents<UserFormData>(userSchema, {
-      role: user?.role || Role.USER,
-      email: user?.email || "",
-      name: user?.name || "",
-      uniqueID: user?.uniqueID || undefined,
-      officeId: user?.officeId || undefined,
-    });
+  const [password, setPassword] = useState("");
+  const {
+    handleSubmit,
+    setIsSubmitting,
+    isSubmitting,
+    Input,
+    SubmitBtn,
+    Select,
+  } = useFormComponents<UserFormData>(userSchema, {
+    role: user?.role || Role.USER,
+    email: user?.email || "",
+    name: user?.name || "",
+    uniqueID: user?.uniqueID || undefined,
+    officeId: user?.officeId || undefined,
+  });
   const router = useRouter();
 
   const onSubmit = async (data: UserFormData) => {
@@ -34,8 +49,8 @@ const UserForm = ({ user, offices }: Props) => {
   };
 
   return (
-    <div className={"flex justify-center"}>
-      <form onSubmit={handleSubmit(onSubmit)} className={"w-96"}>
+    <div className={"flex flex-col items-center"}>
+      <form onSubmit={handleSubmit(onSubmit)} className={"w-full md:w-96"}>
         <Input name="uniqueID" label="Unique ID" />
         <Input name="name" label="Name" />
         <Select
@@ -49,6 +64,7 @@ const UserForm = ({ user, offices }: Props) => {
         />
         <Input name="email" label="Email" type="email" />
         <Select
+          loadOptions={searchOfficeForReactSelect}
           name="officeId"
           label="Office"
           options={offices.map((office) => ({
@@ -58,6 +74,23 @@ const UserForm = ({ user, offices }: Props) => {
         />
         <SubmitBtn label="Save" />
       </form>
+      <BaseInput
+        type="password"
+        value={password}
+        className={"max-w-sm"}
+        onChange={(e) => setPassword(e.target.value)}
+      />
+      <Button
+        onClick={async () => {
+          if (user) {
+            setIsSubmitting(true);
+            await setUserPassword(user.id, password);
+            setIsSubmitting(false);
+          }
+        }}
+      >
+        {isSubmitting && <Spinner />}Set Password
+      </Button>
     </div>
   );
 };
