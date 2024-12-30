@@ -18,7 +18,7 @@ const Footer = async () => {
           <Link
             className={"underline"}
             target={"_blank"}
-            href={"https://www.facebook.com/rakib.emon222"}
+            href={"https://github.com/rlhrakib"}
           >
             Rakib
           </Link>
