@@ -6,10 +6,12 @@ import Image from "next/image";
 const Navbar = async () => {
   const session = await auth();
   return (
-    <div className="flex h-14 bg-azureBlue opacity-60 rounded-t-3xl justify-between p-2">
+    <div className="flex h-10 md:h-14 bg-azureBlue opacity-60 rounded-t-xl md:rounded-t-3xl justify-between p-2">
       <Link href={"/"}>
         <Image
-          className={"h-10 w-10 ms-10 cursor-pointer"}
+          className={
+            "h-8 md:h-10 w-8 md:w-10 ms-1 md:ms-10 -mt-1 md:mt-0 cursor-pointer"
+          }
           src={"/images/logo.svg"}
           alt={"BRUR Logo"}
           height={50}
@@ -17,7 +19,7 @@ const Navbar = async () => {
         />
       </Link>
       {!session?.user && (
-        <div className="ml-auto flex gap-4 mr-10">
+        <div className="ml-auto flex gap-4 mr-10 -mt-2 md:mt-0">
           <Link href={"/api/auth/signin"}>
             <Button variant={"whiteLink"} size={"xl"} className={"font-bold"}>
               Register
@@ -31,9 +33,9 @@ const Navbar = async () => {
         </div>
       )}
       {session?.user && (
-        <div className="ml-auto gap-4 flex mr-10">
+        <div className="ml-auto gap-4 flex mr-10 -mt-2 md:mt-0">
           <Link href={"/profile"}>
-            <Button variant={"whiteLink"} size={"xl"} className={"font-bold"}>
+            <Button variant={"whiteLink"} size={"xl"} className={"font-bold "}>
               Profile
             </Button>
           </Link>

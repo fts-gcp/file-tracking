@@ -16,7 +16,7 @@ const Timeline = ({ events }: TimelineProps) => {
       <div className="relative border-l-4 border-blue-500">
         {events.map((event, index) => (
           <div key={index} className="mb-8 flex items-center">
-            <div className="absolute -left-2.5 bg-blue-500 h-5 w-5 rounded-full"></div>
+            <div className="absolute -left-3 bg-blue-500 h-5 w-5 rounded-full"></div>
             <div className="ml-6">
               <p className="text-gray-500 text-sm">{event.date}</p>
               <h3 className="text-lg font-bold">{event.title}</h3>

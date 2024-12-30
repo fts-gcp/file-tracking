@@ -21,7 +21,7 @@ const UidSearch = () => {
             onChange={(e) => setUid(e.target.value.toUpperCase())}
             placeholder={"Enter UID"}
             className={
-              "w-96 bg-lightAzureBlue h-14 rounded-full ps-8 text-2xl font-bold focus:border-none"
+              "w-full md:w-96 bg-lightAzureBlue h-14 rounded-full ps-8 text-2xl font-bold focus:border-none"
             }
             onKeyDown={(e) => {
               if (e.key === "Enter") {

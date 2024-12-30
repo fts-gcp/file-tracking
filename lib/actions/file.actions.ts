@@ -55,60 +55,16 @@ export const updateFile = async (id: string, data: FileFormData) => {
     return false;
   }
 
+  if (!data.userId) {
+    delete data.userId;
+  }
+
   await prisma.file.update({
     where: {
       id,
     },
     data,
   });
-
-  try {
-    if (
-      (data.status === FileStatus.APPROVED &&
-        file.status !== FileStatus.APPROVED) ||
-      (data.status === FileStatus.REJECTED &&
-        file.status !== FileStatus.REJECTED) ||
-      (data.status === FileStatus.MORE_INFO_REQUIRED &&
-        file.status !== FileStatus.MORE_INFO_REQUIRED)
-    ) {
-      const user = file.userId
-        ? await prisma.user.findUnique({
-            where: {
-              id: file.userId,
-            },
-          })
-        : null;
-      const firstMovement = await prisma.movement.findFirst({
-        where: {
-          fileId: file.id,
-        },
-        orderBy: {
-          createdAt: "asc",
-        },
-      });
-      const action =
-        data.status === FileStatus.APPROVED
-          ? "Approved"
-          : data.status === FileStatus.REJECTED
-            ? "Rejected"
-            : "requested more information";
-      const created = firstMovement?.createdAt || file.createdAt;
-      const actioned = new Date();
-      if (user && user.email) {
-        await sendFTSEmail({
-          action: action,
-          userName: user.name || "Unknown",
-          userEmail: user.email,
-          fileName: file.name || file.accessKey,
-          dateSubmitted: `${created.toLocaleDateString()} ${created.toLocaleTimeString()}`,
-          lastActionDate: `${actioned.toLocaleDateString()} ${actioned.toLocaleTimeString()}`,
-          currentOffice: lastMovement?.office.name || "N/A",
-        });
-      }
-    }
-  } catch (e) {
-    console.error(e);
-  }
   return true;
 };
 

@@ -51,20 +51,6 @@ const FileForm = ({ file, selectedUsers }: Props) => {
         <Input name="department" placeholder="Department" />
         <Textarea name="details" />
         <Select
-          isSearchable={false}
-          name="status"
-          options={[
-            { label: "Not Received", value: FileStatus.NOT_RECEIVED },
-            { label: "Processing", value: FileStatus.PROCESSING },
-            {
-              label: "More Information Needed",
-              value: FileStatus.MORE_INFO_REQUIRED,
-            },
-            { label: "Approved", value: FileStatus.APPROVED },
-            { label: "Rejected", value: FileStatus.REJECTED },
-          ]}
-        />
-        <Select
           name="userId"
           loadOptions={searchUserForReactSelect}
           options={defaultOptions}

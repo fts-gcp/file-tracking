@@ -39,10 +39,18 @@ export default function RootLayout({
         >
           <Navbar />
           <div className={"mt-2"}>
-            <p className={"text-3xl text-blue-400 font-bold text-center "}>
+            <p
+              className={
+                "text-xl md:text-3xl text-blue-400 font-bold text-center "
+              }
+            >
               Begum Rokeya University, Rangpur
             </p>
-            <p className={"text-3xl text-blue-400 font-bold text-center "}>
+            <p
+              className={
+                "text-xl md:text-3xl text-blue-400 font-bold text-center "
+              }
+            >
               File Tracking System
             </p>
             {children}
