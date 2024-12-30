@@ -65,7 +65,7 @@ const FilesPage = async ({ searchParams }: Props) => {
               <Link
                 key={index}
                 className={"text-blue-600"}
-                href={`/admin/files/${file.id}`}
+                href={`/f/${file.barcode}1`}
               >
                 View it{" "}
               </Link>,
