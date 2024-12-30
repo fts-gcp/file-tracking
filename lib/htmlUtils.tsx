@@ -77,14 +77,14 @@ export const generateBarcodePDF = async ({ pages }: BarInfo) => {
                     width: "180px",
                   }}
                 >
-                  <p>URL: https://fts.brur.ac.bd/</p>
+                  <p>URL: https://web.fts.brur.ac.bd/</p>
                   <p>UID: {code.qrcode}</p>
                 </div>
               )}
               {!code.onlyBarcode && (
                 <div className={"w-8"}>
                   <GenerateAztecCode
-                    value={`https://fts.brur.com.bd/f/${code.qrcode}`}
+                    value={`https://web.fts.brur.com.bd/f/${code.qrcode}`}
                   />
                 </div>
               )}
