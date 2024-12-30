@@ -40,8 +40,7 @@ const FileDetailsPage = async ({ params }: Props) => {
         },
       },
     });
-  }
-  if (fid.length === 13) {
+  } else if (fid.length === 13) {
     file = await prisma.file.findUnique({
       where: {
         barcode: fid.substring(0, 12),
@@ -54,8 +53,7 @@ const FileDetailsPage = async ({ params }: Props) => {
         },
       },
     });
-  }
-  if (fid.length === 24) {
+  } else {
     file = await prisma.file.findUnique({
       where: {
         id: fid,
