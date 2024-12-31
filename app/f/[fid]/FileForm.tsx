@@ -43,12 +43,57 @@ const FileForm = ({ file, selectedUsers }: Props) => {
     setIsSubmitting(false);
   };
 
+  const searchDepartment = (input: string) => {
+    const departments = [
+      { value: "AIS", label: "Account and Information Systems" },
+      { value: "Bangla", label: "Bangla" },
+      { value: "Chemistry", label: "Chemistry" },
+      { value: "CSE", label: "Computer Science and Engineering" },
+      { value: "DM", label: "Disaster Management" },
+      { value: "Economics", label: "Economics" },
+      { value: "EEE", label: "Electrical and Electronics Engineering" },
+      { value: "English", label: "English" },
+      { value: "ES", label: "Environmental Science" },
+      { value: "F&B", label: "Finance and Banking" },
+      { value: "GSDS", label: "Gender Studies and Development Studies" },
+      { value: "HA", label: "History and Archeology" },
+      { value: "MIB", label: "Management Information and Banking" },
+      { value: "MIS", label: "Management Information System" },
+      { value: "MS", label: "Management Studies" },
+      { value: "Marketing", label: "Marketing" },
+      { value: "MCJ", label: "Mass Communication and Journalism" },
+      { value: "Mathematics", label: "Mathematics" },
+      { value: "Others", label: "Others" },
+      { value: "Physics", label: "Physics" },
+      { value: "Political Science", label: "Political Science" },
+      { value: "Public Administration", label: "Public Administration" },
+      { value: "Sociology", label: "Sociology" },
+      { value: "Statistics", label: "Statistics" },
+    ];
+
+    return departments.filter(
+      (department) =>
+        department.label.toLowerCase().includes(input.toLowerCase()) ||
+        department.value.toLowerCase().includes(input.toLowerCase()),
+    );
+  };
+
   return (
     <div>
       <form onSubmit={handleSubmit(onSubmit)}>
-        <Input name="fileType" placeholder="File Type" />
+        <Select
+          name="fileType"
+          options={[
+            { value: "NOC", label: "NOC" },
+            { value: "Others", label: "Others" },
+          ]}
+        />
         <Input name="name" placeholder="Name" />
-        <Input name="department" placeholder="Department" />
+        <Select
+          name="department"
+          options={searchDepartment("")}
+          loadOptions={async (input) => searchDepartment(input)}
+        />
         <Textarea name="details" />
         <Select
           name="userId"

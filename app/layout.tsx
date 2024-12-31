@@ -33,30 +33,32 @@ export default function RootLayout({
         <NextTopLoader height={10} color={"red"} />
         <div className="background-image"></div>
         <div
-          style={{
-            minHeight: "92vh",
-          }}
+          className={
+            "min-h-[94vh] md:min-h-[100vh] flex flex-col justify-between"
+          }
         >
-          <Navbar />
-          <div className={"mt-2"}>
-            <p
-              className={
-                "text-xl md:text-3xl text-blue-400 font-bold text-center "
-              }
-            >
-              Begum Rokeya University, Rangpur
-            </p>
-            <p
-              className={
-                "text-xl md:text-3xl text-blue-400 font-bold text-center "
-              }
-            >
-              File Tracking System
-            </p>
-            {children}
+          <div>
+            <Navbar />
+            <div className={"mt-2"}>
+              <p
+                className={
+                  "text-xl md:text-3xl text-blue-400 font-bold text-center "
+                }
+              >
+                Begum Rokeya University, Rangpur
+              </p>
+              <p
+                className={
+                  "text-xl md:text-3xl text-blue-400 font-bold text-center "
+                }
+              >
+                File Tracking System
+              </p>
+              {children}
+            </div>
           </div>
+          <Footer />
         </div>
-        <Footer />
       </body>
     </html>
   );

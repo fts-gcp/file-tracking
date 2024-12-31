@@ -162,11 +162,14 @@ const DeviceScan = ({ noButton }: Props) => {
           onKeyDown={async (e) => {
             if (e.key === "Enter") {
               e.preventDefault();
-              if (barcode.length != 13) {
-                setBarcode("");
-                return;
-              }
-              await onSuccessfulScan(barcode);
+              setTimeout(async () => {
+                if (barcode.length != 13) {
+                  setBarcode("");
+                  return;
+                }
+                console.log("Scanned Barcode: ", barcode);
+                await onSuccessfulScan(barcode);
+              }, 200);
             }
           }}
         />
