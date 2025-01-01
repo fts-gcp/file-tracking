@@ -266,7 +266,9 @@ const useFormComponents = <T extends FieldValues>(
                 }}
                 isMulti={isMulti || false}
                 name={name}
-                value={options.filter((c) => field.value?.includes(c.value))}
+                defaultValue={options.filter((c) =>
+                  field.value?.includes(c.value),
+                )}
               />
             );
           }}

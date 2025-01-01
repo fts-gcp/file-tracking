@@ -25,6 +25,7 @@ const FileForm = ({ file, selectedUsers }: Props) => {
 
   const [defaultOptions, setDefaultOptions] =
     useState<{ value: string; label: string }[]>(selectedUsers);
+
   useEffect(() => {
     searchUserForReactSelect("").then((res) => {
       for (const user of res) {
