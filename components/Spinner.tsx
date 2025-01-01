@@ -11,18 +11,11 @@ const Spinner = ({ sz, color }: Props) => {
   if (sz === "lg") size = 128;
   if (sz === "xl") size = 150;
   if (sz === "2xl") size = 200;
-  let extraClass = "text-white";
-  if (color === "black") extraClass = "text-black";
-  else if (color === "white") extraClass = "text-white";
+  let loader = "/loader.svg";
+  if (color === "black") loader = "/loader-black.svg";
   return (
-    <div className={"loader " + extraClass}>
-      <Image
-        src={"/loader.svg"}
-        alt={"Loader"}
-        width={size}
-        height={size}
-        className={"animate-spin"}
-      />
+    <div className={"loader "}>
+      <Image src={loader} alt={"Loader"} width={size} height={size} />
     </div>
   );
 };
