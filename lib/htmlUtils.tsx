@@ -44,7 +44,7 @@ export const generateBarcodePDF = async ({ pages }: BarInfo) => {
             key={`${row}-${col}`}
             style={{
               position: "absolute",
-              top: row * 29 * MM_TO_PX + 10,
+              top: row * 29 * MM_TO_PX + 15,
               left: col * 69 * MM_TO_PX + 10,
               width: code.onlyBarcode ? `${60 * MM_TO_PX}px` : "100%",
               height: `${20 * MM_TO_PX}px`,
@@ -96,7 +96,7 @@ export const generateBarcodePDF = async ({ pages }: BarInfo) => {
 
     root.render(<>{barcodes}</>);
 
-    await new Promise((resolve) => setTimeout(resolve, 200));
+    await new Promise((resolve) => setTimeout(resolve, 100));
 
     await html2canvas(tempContainer).then((canvas) => {
       const imgData = canvas.toDataURL("image/png");

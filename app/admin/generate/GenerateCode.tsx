@@ -75,7 +75,7 @@ const GenerateCode = () => {
       {loading && (
         <div className={"flex justify-center text-red-600 text-xl font-bold"}>
           Generating Pages will take some time. Please be patient. Don&#39;t
-          reload while PDF are shown right side.
+          reload while PDF are shown left side.
         </div>
       )}
     </div>
