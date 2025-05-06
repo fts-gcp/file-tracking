@@ -70,9 +70,10 @@ const useFormComponents = <T extends FieldValues>(
     label?: string | null;
     placeholder?: string;
     type?: "text" | "email" | "datetime-local" | "number" | "password";
+    disabled?: boolean;
   }
 
-  const CustomInput = ({ name, label, placeholder, type }: InputProps) => {
+  const CustomInput = ({ disabled, name, label, placeholder, type }: InputProps) => {
     const [isVisible, setIsVisible] = useState(false);
     let extraArgs = {};
     if (type === "datetime-local") {
@@ -116,6 +117,7 @@ const useFormComponents = <T extends FieldValues>(
             placeholder={placeholder}
             {...register(name, extraArgs)}
             className={`${error?.message ? "input-error" : ""}`}
+            disabled={disabled}
           />
           {type === "password" && (
             <Button
@@ -221,6 +223,7 @@ const useFormComponents = <T extends FieldValues>(
     loadOptions?: (inputValue: string) => Promise<SelectItem[]>;
     isMulti?: boolean;
     isSearchable?: boolean;
+    disabled?: boolean;
   }
 
   const CustomSelect = ({
@@ -230,6 +233,7 @@ const useFormComponents = <T extends FieldValues>(
     isMulti,
     isSearchable,
     loadOptions,
+    disabled,
   }: SelectProps) => {
     const partedName = name.split(".");
     let error = errors;
@@ -269,6 +273,7 @@ const useFormComponents = <T extends FieldValues>(
                 defaultValue={options.filter((c) =>
                   field.value?.includes(c.value),
                 )}
+                isDisabled={disabled}
               />
             );
           }}

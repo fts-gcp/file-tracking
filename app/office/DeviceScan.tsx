@@ -21,6 +21,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Textarea } from "@/components/ui/textarea";
 import ScanEAN13 from "@/components/ScanEAN13";
+import {LucideX} from "lucide-react";
 
 interface Props {
   noButton?: boolean;
@@ -81,7 +82,14 @@ const DeviceScan = ({ noButton }: Props) => {
       <AlertDialog open={isAlertOpen} onOpenChange={setIsAlertOpen}>
         <AlertDialogContent className={"bg-lightAzureBlue"}>
           <AlertDialogHeader>
+            <div className={"flex justify-between"}>
             <AlertDialogTitle>Updating File Status</AlertDialogTitle>
+            <div>
+              <LucideX
+                  color={"red"}
+                  onClick={() => setIsAlertOpen(false)}
+              />
+            </div></div>
             <AlertDialogDescription>
               <Textarea
                 className={"text-black bg-white"}

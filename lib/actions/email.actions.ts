@@ -95,15 +95,17 @@ const generateHtmlEmail = (details: EmailDetails): string => `
 
 export const sendFTSEmail = async (details: EmailDetails) => {
   const transporter = nodemailer.createTransport({
-    service: "gmail",
+    host: 'mail.fts.brur.ac.bd',
+    port: 465,
+    secure: true,
     auth: {
-      user: process.env.GMAIL_USERNAME,
-      pass: process.env.GMAIL_APP_PASSWORD,
-    },
+      user: process.env.EMAIL_ADDRESS,
+      pass: process.env.EMAIL_PASSWORD,
+    }
   });
 
   const mailOptions = {
-    from: process.env.GMAIL_USERNAME,
+    from: process.env.EMAIL_ADDRESS,
     to: details.userEmail,
     subject: `File ${details.action} - ${details.fileName}`,
     text: generateTextEmail(details),

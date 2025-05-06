@@ -108,6 +108,7 @@ const FileDetailsPage = async ({ params }: Props) => {
     user &&
     (user?.role === Role.ADMIN ||
       movements.at(-1)?.officeId === user?.officeId);
+  const registerOfficeId = process.env.REGISTER_OFFICE_ID;
 
   return (
     <div className={"mt-2"}>
@@ -137,7 +138,7 @@ const FileDetailsPage = async ({ params }: Props) => {
 
         {isAllowedToEdit && (
           <div className={"w-96"}>
-            <FileForm file={file} selectedUsers={selectedUsers} />
+            <FileForm file={file} selectedUsers={selectedUsers} processed={user.officeId !== registerOfficeId} />
           </div>
         )}
       </div>

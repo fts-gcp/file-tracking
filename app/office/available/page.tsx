@@ -6,11 +6,15 @@ import Status from "@/components/Status";
 import Link from "next/link";
 import CustomPagination from "@/components/CustomPagination";
 import { Metadata } from "next";
+import StatusFilter from "./StatusFilter";
+import {ClearFileFilter} from "./StatusFilter";
+import {FileStatus} from "@prisma/client";
 
 interface Props {
   searchParams: Promise<{
     page?: string;
     limit?: string;
+    status?: string;
   }>;
 }
 
@@ -25,7 +29,7 @@ const AvailableFilesPage = async ({ searchParams }: Props) => {
     },
   });
 
-  const { page: _page, limit: _limit } = await searchParams;
+  const { page: _page, limit: _limit, status } = await searchParams;
   const page = parseInt(_page || "1");
   const limit = parseInt(_limit || "5");
 
@@ -33,6 +37,7 @@ const AvailableFilesPage = async ({ searchParams }: Props) => {
     where: {
       officeId: user!.officeId || "fsdfdsf",
       nextId: null,
+      file: status ? {status: status as FileStatus}: undefined,
     },
     orderBy: {
       createdAt: "desc",
@@ -49,13 +54,24 @@ const AvailableFilesPage = async ({ searchParams }: Props) => {
     },
   });
 
+    if (movements.length === 0) {
+        return (
+        <div className={"text-center text-azureBlue font-bold text-lg"}>
+            No data available
+            <div className={"mt-4"}>
+                <ClearFileFilter />
+            </div>
+        </div>
+        );
+    }
+
   return (
     <div className={"flex flex-col items-center"}>
       <h1 className={"text-center text-3xl text-blue-800 font-bold mt-10"}>
         Available Files
       </h1>
       <CustomTable
-        headers={["Name", "Barcode", "Status", "Actions"]}
+        headers={["Name", "Barcode", <StatusFilter key="status-filter" initialStatus={status} />, "Actions"]}
         data={{
           rows: movements.map(({ file }, index) => ({
             cols: [

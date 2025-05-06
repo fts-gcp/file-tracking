@@ -8,11 +8,12 @@ import { searchUserForReactSelect } from "@/lib/actions/user.actions";
 import { useEffect, useState } from "react";
 
 interface Props {
+  processed: boolean;
   file: FileModel;
   selectedUsers: { value: string; label: string }[];
 }
 
-const FileForm = ({ file, selectedUsers }: Props) => {
+const FileForm = ({ processed, file, selectedUsers }: Props) => {
   const { handleSubmit, setIsSubmitting, Input, Select, Textarea, SubmitBtn } =
     useFormComponents<FileFormData>(fileSchema, {
       fileType: file.fileType || "",
@@ -88,18 +89,21 @@ const FileForm = ({ file, selectedUsers }: Props) => {
             { value: "NOC", label: "NOC" },
             { value: "Others", label: "Others" },
           ]}
+          disabled={processed}
         />
-        <Input name="name" placeholder="Name" />
+        <Input name="name" placeholder="Name" disabled={processed} />
         <Select
           name="department"
           options={searchDepartment("")}
           loadOptions={async (input) => searchDepartment(input)}
+          disabled={processed}
         />
         <Textarea name="details" />
         <Select
           name="userId"
           loadOptions={searchUserForReactSelect}
           options={defaultOptions}
+          disabled={processed}
         />
         <SubmitBtn label={"Update File"} />
       </form>
