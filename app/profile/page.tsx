@@ -8,6 +8,7 @@ import Link from "next/link";
 import CustomPagination from "@/components/CustomPagination";
 import { isNumber } from "@/lib/utils";
 import { Metadata } from "next";
+import ChangePassword from "./ChangePassword";
 
 interface Props {
   searchParams: Promise<{
@@ -96,6 +97,9 @@ const ProfilePage = async ({ searchParams }: Props) => {
           <div className={"grid grid-cols-6 border-2 my-2 p-2 rounded-lg"}>
             <div>Role:</div>
             <div className={"col-span-5 ms-5"}>{user.role}</div>
+          </div>
+          <div className={"grid grid-cols-6 border-2 my-2 p-2 rounded-lg w-full"}>
+            <ChangePassword userId={user.id} />
           </div>
         </div>
       </div>

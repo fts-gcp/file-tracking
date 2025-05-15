@@ -13,6 +13,7 @@ import { useState } from "react";
 import { Input as BaseInput } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import Spinner from "@/components/Spinner";
+import PasswordField from "@/components/PasswordField";
 
 interface Props {
   user?: User;
@@ -74,11 +75,9 @@ const UserForm = ({ user, offices }: Props) => {
         />
         <SubmitBtn label="Save" />
       </form>
-      <BaseInput
-        type="password"
+      <PasswordField
         value={password}
-        className={"max-w-sm"}
-        onChange={(e) => setPassword(e.target.value)}
+        onChange={(value) => setPassword(value)}
       />
       <Button
         onClick={async () => {
